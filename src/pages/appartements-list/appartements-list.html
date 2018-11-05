@@ -1,0 +1,33 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>({{os.counter.current}}/{{os.counter.total}}) Appartements</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="problem()">Problème</button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+
+  <ion-list>
+    <button ion-item text-wrap *ngFor="let customer of customers; let i = index" (click)="next(i)">
+      <ion-icon *ngIf="customer.order.deliveredTime" item-start color="secondary" name="checkmark-circle"></ion-icon>
+      <ion-icon *ngIf="customer.notes.length > 0" item-start color="danger" name="warning"></ion-icon>
+      <div ion-label>
+        <h1>Etage {{customer.floor}}</h1>
+        <h1>{{customer.name}}</h1>
+        <div>Numéros : {{customer.flatNumber}}</div>
+        <div margin-top>{{customer.infos}}</div>
+        <!-- <p>Livré : {{customer.order.deliveredTime}}</p> -->
+        <!-- <p>notes : {{customer.notes}}</p> -->
+      </div>
+      <span class="chip" *ngIf="customer.isNew" item-end>
+        nouveau
+      </span>
+    </button>
+  </ion-list>
+
+</ion-content>

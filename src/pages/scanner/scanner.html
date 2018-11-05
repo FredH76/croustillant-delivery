@@ -1,0 +1,23 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>scanner</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <button ion-button block (click)="scan()">scanner</button>
+
+  <div *ngIf="error" class="error">{{error}}</div>
+
+  <ion-item>
+    <ion-label floating>ID client</ion-label>
+    <ion-input [(ngModel)]="input_id"></ion-input>
+  </ion-item>
+  <div *ngIf="error2" class="error">{{error2}}</div>
+  <button ion-button block color="secondary" (click)="add()">Valider</button>
+
+  <button margin-top ion-button block color="secondary" (click)="next()">force suivant</button>
+</ion-content>

@@ -1,0 +1,47 @@
+page-order {
+  .name {
+    background-color: #333333;
+    color: white;
+    padding: 12px;
+    font-size: 1.3em;
+  }
+
+  .orders {
+    padding: 16px;
+    background-color: #e0e0e0;
+
+    .order {
+      font-size: 1.4em;
+      display: flex;
+      justify-content: space-between;
+      &:not(:last-child) {
+        margin-bottom: 16px;
+      }
+    }
+  }
+
+  .chip {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+
+    .element {
+      background-color: color($colors, yellow);
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+  }
+
+  .total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: solid black 1px;
+    padding-top: 10px;
+
+    .price,
+    .label {
+      font-size: 1.4em;
+    }
+  }
+}

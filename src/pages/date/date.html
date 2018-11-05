@@ -1,0 +1,20 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Date</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-item>
+    <ion-label>Date</ion-label>
+    <ion-datetime displayFormat="DD MMMM YYYY" [min]="minDate" [max]="maxDate" [(ngModel)]="os.date"></ion-datetime>
+  </ion-item>
+
+  <button margin-top ion-button block (click)="next()">Suivant</button>
+
+  <!-- <div>date : {{date}}</div> -->
+
+</ion-content>

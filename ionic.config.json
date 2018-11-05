@@ -1,0 +1,14 @@
+{
+  "name": "Croustillant-delivery",
+  "app_id": "009cee32",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  },
+  "proxies": [
+    {
+      "path": "/api",
+      "proxyUrl": "https://croustillant.com/api"
+    }
+  ]
+}

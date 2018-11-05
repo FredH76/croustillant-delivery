@@ -1,0 +1,21 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button (click)="close()">Annuler</button>
+    </ion-buttons>
+    <ion-title>Notes</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-item>
+    <ion-label stacked>Notes</ion-label>
+    <ion-textarea [(ngModel)]="notes" placeholder="Notes" rows=10></ion-textarea>
+  </ion-item>
+
+  <button ion-button block color="secondary" (click)="add()">Valider</button>
+
+</ion-content>

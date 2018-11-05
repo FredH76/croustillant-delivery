@@ -1,0 +1,52 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>({{os.counter.current}}/{{os.counter.total}}) {{os.orders.addresses[addresseIndex].label}}</ion-title>
+  </ion-navbar>
+
+  <ion-toolbar mode="md">
+    <ion-segment mode="md" [(ngModel)]="mode">
+      <ion-segment-button value="1">
+        Commandes
+      </ion-segment-button>
+      <ion-segment-button value="2">
+        Bâtiments
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+
+</ion-header>
+
+
+<ion-content>
+
+  <div [ngSwitch]="mode">
+    <ion-list *ngSwitchCase="'1'">
+      <ion-item text-wrap *ngFor="let cust of customers; let i = index;">
+        <ion-icon *ngIf="cust.order.deliveredTime" item-start color="secondary" name="checkmark-circle"></ion-icon>
+        <ion-icon *ngIf="cust.notes" item-start color="danger" name="warning"></ion-icon>
+        <h1>Commande {{cust.order.id}}</h1>
+        <h2>{{cust.name}}
+          <span *ngIf="cust.isNew == true" class="chip">nouveau</span>
+        </h2>
+        <h3 *ngIf="cust.order.deliveredTime">livré : {{cust.order.deliveredTime | date:'short'}}</h3>
+        <div margin-top>
+          <h2 *ngFor="let product of cust.order.products">{{product.quantity}}x {{product.name}}</h2>
+        </div>
+      </ion-item>
+    </ion-list>
+    <ion-list *ngSwitchCase="'2'">
+      <button ion-item text-wrap *ngFor="let building of os.orders.addresses[addresseIndex].buildings; let i = index" (click)="next(i)">
+        <ion-icon *ngIf="building.valid" item-start color="secondary" name="checkmark-circle"></ion-icon>
+        <ion-icon *ngIf="building.notes || building.issue" item-start color="danger" name="warning"></ion-icon>
+        <h1>{{ building.name }}</h1>
+        <div *ngIf="building.code">Code : {{building.code}}</div>
+        <div *ngIf="building.hasBadge">Badge : {{building.hasBadge | formatBoolean}}</div>
+        <div *ngIf="building.hasKey">Clé : {{building.hasKey | formatBoolean}}</div>
+        <div *ngIf="building.hasElevator">Ascenseur : {{building.hasElevator | formatBoolean}}</div>
+        <div *ngIf="building.comment">Indications : {{building.comment}}</div>
+      </button>
+    </ion-list>
+  </div>
+
+</ion-content>

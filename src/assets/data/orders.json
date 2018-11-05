@@ -1,0 +1,252 @@
+{
+  "addresses": [
+    {
+      "label": "3 avenue des Champs Elysee",
+      "status": null,
+      "buildings": [
+        {
+          "id": "1",
+          "status": null,
+          "name": "Building 1",
+          "code": "",
+          "hasBadge": true,
+          "hasKey": true,
+          "hasElevator": false,
+          "notes": "",
+          "customers": [
+            {
+              "id": "2",
+              "name": "John Doe",
+              "flatNumber": "64",
+              "floor": "rez de chaussé",
+              "infos": "3eme porte à gauche",
+              "isNew": true,
+              "notes": "",
+              "order": {
+                "id": "3",
+                "deliveredTime": null,
+                "products": [
+                  {
+                    "name": "Pain au chocolat",
+                    "productId": "3",
+                    "quantity": 5
+                  }
+                ]
+              }
+            },
+            {
+              "id": "29",
+              "name": "John Doe",
+              "flatNumber": "98",
+              "floor": "10",
+              "infos": "3eme porte à gauche",
+              "isNew": false,
+              "notes": "",
+              "order": {
+                "id": "34",
+                "deliveredTime": null,
+                "products": [
+                  {
+                    "name": "Pain au chocolat",
+                    "productId": "3",
+                    "quantity": 5
+                  },
+                  {
+                    "name": "Croissant",
+                    "productId": "6",
+                    "quantity": 5
+                  }
+                ]
+              }
+            },
+            {
+              "id": "9",
+              "name": "John Doe",
+              "flatNumber": "6",
+              "floor": "5",
+              "infos": "3eme porte à gauche",
+              "isNew": false,
+              "notes": "",
+              "order": {
+                "id": "3",
+                "deliveredTime": null,
+                "products": [
+                  {
+                    "name": "Pain au chocolat",
+                    "productId": "3",
+                    "quantity": 5
+                  },
+                  {
+                    "name": "Baguette",
+                    "productId": "8",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "status": null,
+          "name": "Building 2",
+          "code": "",
+          "hasBadge": false,
+          "hasKey": false,
+          "hasElevator": false,
+          "notes": "",
+          "customers": [
+            {
+              "id": "10",
+              "name": "John Doe",
+              "flatNumber": "3",
+              "floor": "1",
+              "infos": "3eme porte à gauche",
+              "isNew": true,
+              "notes": "",
+              "order": {
+                "id": "980",
+                "deliveredTime": null,
+                "products": [
+                  {
+                    "name": "Pain au chocolat",
+                    "productId": "3",
+                    "quantity": 2
+                  },
+                  {
+                    "name": "Croissant",
+                    "productId": "6",
+                    "quantity": 4
+                  }
+                ]
+              }
+            },
+            {
+              "id": "2",
+              "name": "John Doe",
+              "flatNumber": "56",
+              "floor": "1",
+              "infos": "3eme porte à gauche",
+              "isNew": false,
+              "notes": "",
+              "order": {
+                "id": "3",
+                "deliveredTime": null,
+                "products": [
+                  {
+                    "name": "Baguette",
+                    "productId": "8",
+                    "quantity": 3
+                  }
+                ]
+              }
+            },
+            {
+              "id": "3",
+              "name": "John Doe",
+              "flatNumber": "56",
+              "floor": "2",
+              "infos": "3eme porte à gauche",
+              "isNew": false,
+              "notes": "",
+              "order": {
+                "id": "3",
+                "deliveredTime": null,
+                "products": [
+                  {
+                    "name": "Pain au chocolat",
+                    "productId": "3",
+                    "quantity": 5
+                  },
+                  {
+                    "name": "Baguette",
+                    "productId": "8",
+                    "quantity": 5
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "10 avenue des Champs Elysee",
+      "status": null,
+      "buildings": [
+        {
+          "id": "1",
+          "status": null,
+          "name": "Building 1",
+          "code": "",
+          "hasBadge": true,
+          "hasKey": true,
+          "hasElevator": true,
+          "notes": "",
+          "customers": [
+            {
+              "id": "1",
+              "name": "John Doe",
+              "flatNumber": "56",
+              "floor": "1",
+              "infos": "3eme porte à gauche",
+              "isNew": false,
+              "notes": "",
+              "order": {
+                "id": "3",
+                "deliveredTime": null,
+                "products": [
+                  {
+                    "name": "Pain au chocolat",
+                    "productId": "3",
+                    "quantity": 5
+                  }
+                ]
+              }
+            },
+            {
+              "id": "2",
+              "name": "John Doe",
+              "flatNumber": "56",
+              "floor": "1",
+              "infos": "3eme porte à gauche",
+              "isNew": true,
+              "notes": "",
+              "order": {
+                "id": "3",
+                "deliveredTime": null,
+                "products": [
+                  {
+                    "name": "Pain au chocolat",
+                    "productId": "3",
+                    "quantity": 5
+                  }
+                ]
+              }
+            },
+            {
+              "id": "3",
+              "name": "John Doe",
+              "flatNumber": "56",
+              "floor": "1",
+              "infos": "3eme porte à gauche",
+              "isNew": false,
+              "notes": "",
+              "order": {
+                "id": "3",
+                "deliveredTime": null,
+                "products": [
+                  {
+                    "name": "Pain au chocolat",
+                    "productId": "3",
+                    "quantity": 5
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

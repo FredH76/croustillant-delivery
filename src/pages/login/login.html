@@ -1,0 +1,42 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Se connecter</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+  <form [formGroup]="form" novalidate>
+
+    <ion-item>
+      <ion-label floating>Email</ion-label>
+      <ion-input type="email" formControlName="email"></ion-input>
+    </ion-item>
+    <div *ngIf="email.invalid" class="input-error">
+      <div *ngIf="email.hasError('required') && (email.touched)">
+        Requis
+      </div>
+      <div *ngIf="email.hasError('pattern') && (email.touched)">
+        Invalide
+      </div>
+    </div>
+    <ion-item>
+      <ion-label floating>Mot de passe</ion-label>
+      <ion-input type="password" formControlName="password"></ion-input>
+    </ion-item>
+    <div *ngIf="password.invalid" class="input-error">
+      <div *ngIf="password.hasError('required') && (password.touched)">
+        Requis
+      </div>
+      <div *ngIf="password.hasError('pattern') && (password.touched)">
+        Invalide
+      </div>
+    </div>
+  </form>
+
+  <button margin-top ion-button block large (click)="login()">Se connecter</button>
+
+</ion-content>

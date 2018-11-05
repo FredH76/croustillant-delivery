@@ -1,0 +1,19 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Zone de livraison</ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="logout()">Déconnexion</button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <ion-list>
+    <button ion-item *ngFor="let zone of os.zones" (click)="selectZone(zone.id)">
+      {{ zone.name }}
+    </button>
+  </ion-list>
+</ion-content>

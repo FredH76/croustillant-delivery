@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>({{os.counter.current}}/{{os.counter.total}}) Commande {{order.id}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+  <div class="name">{{customer.name}}</div>
+  <div class="orders">
+    <div class="chip" *ngIf="customer.isNew">
+      <span class="element">1ère commande</span>
+    </div>
+    <div class="order" *ngFor="let product of order.products">
+      <span>{{product.name}}</span>
+      <span>x{{product.quantity}}</span>
+    </div>
+    <div class="total">
+      <span class="label">Total</span>
+      <span class="price">{{customer.order.totalPrice}}€</span>
+    </div>
+  </div>
+  <ion-list margin-top>
+
+    <ion-item-group>
+      <ion-item>
+        Commande ID
+        <span item-content>{{order.id}}</span>
+      </ion-item>
+      <ion-item>
+        Client ID
+        <span item-content>{{customer.id}}</span>
+      </ion-item>
+      <ion-item *ngIf="customer.order.deliveredTime">Livré
+        <ion-icon item-start color="secondary" name="checkmark-circle"></ion-icon>
+        <span item-content>{{customer.order.deliveredTime | date:'short'}}</span>
+      </ion-item>
+      <button ion-item (click)="problem()">Note / Problème
+        <ion-icon *ngIf="customer.notes" item-start color="danger" name="warning"></ion-icon>
+        <ion-icon *ngIf="!customer.notes" item-start color="light" name="create"></ion-icon>
+      </button>
+    </ion-item-group>
+  </ion-list>
+</ion-content>
+
+<ion-footer *ngIf="!customer.order.deliveredTime">
+  <button ion-button block large color="secondary" (click)="add()">Livrée</button>
+</ion-footer>
