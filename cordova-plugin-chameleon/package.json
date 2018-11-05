@@ -1,0 +1,14 @@
+{
+  "name": "cordova-plugin-chameleon",
+  "version": "1.0.0",
+  "description": "upload Badge/RebadgeID to Chameleon USB emulator",
+  "cordova": {
+    "id": "cordova-plugin-chameleon",
+    "platforms": []
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "author": "Frederic Huguenin",
+  "license": "ISC"
+}
