@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
 import { OrderProvider } from "../../providers/order/order";
+import chameleon from '../../../plugins/cordova-plugin-chameleon/www/chameleon';
 
 @IonicPage()
 @Component({
@@ -12,7 +13,7 @@ export class DeliveryZonesPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public os: OrderProvider
-  ) {}
+  ) { }
 
   selectZone(id) {
     this.os.zoneId = id;
@@ -23,5 +24,21 @@ export class DeliveryZonesPage {
     this.os.logOut().then(() => {
       location.reload();
     });
+  }
+
+
+  public testUSB() {
+    console.log("Test USB clicked");
+    chameleon.coolMethod(" Fred", this.successUSB, this.errorUSB);
+  }
+
+  public successUSB(msg) {
+    //connectResult = "YES : USB CONNECTED !";
+    console.debug(msg);
+  }
+
+  public errorUSB(msg) {
+    //this.connectResult = "NO : USB NOT CONNECTED ..";
+    console.error(msg);
   }
 }
