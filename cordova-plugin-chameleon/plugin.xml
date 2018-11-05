@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <plugin id="cordova-plugin-chameleon" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
     <name>Chameleon</name>
+
+    <!-- define the module name to use in .ts files, and specify the js file that implements exported functions -->
     <js-module name="chameleon" src="www/chameleon.js">
         <clobbers target="cordova.plugins.chameleon" />
     </js-module>
@@ -16,7 +18,20 @@
         </config-file>
 
         <!-- copy Maxied file (no lib or repo available) -->
-        <source-file src="src/android/maxieds/ChameleonPlugin.java" target-dir="src/com/maxieds/chameleonminiusb/ChameleonPlugin" />
+        <source-file src="src/android/maxieds/ChameleonPlugin.java" target-dir="src/com/maxieds/chameleonminiusb" />
+        <source-file src="src/android/maxieds/ChameleonCommands.java" target-dir="src/com/maxieds/chameleonminiusb" />
+        <source-file src="src/android/maxieds/ChameleonDeviceConfig.java" target-dir="src/com/maxieds/chameleonminiusb" />
+        <source-file src="src/android/maxieds/ChameleonLibraryLoggingReceiver.java" target-dir="src/com/maxieds/chameleonminiusb" />
+        <source-file src="src/android/maxieds/ChameleonUSBInterface.java" target-dir="src/com/maxieds/chameleonminiusb" />
+        <source-file src="src/android/maxieds/LibraryLogging.java" target-dir="src/com/maxieds/chameleonminiusb" />
+        <source-file src="src/android/maxieds/Utils.java" target-dir="src/com/maxieds/chameleonminiusb" />
+        <source-file src="src/android/maxieds/XModem.java" target-dir="src/com/maxieds/chameleonminiusb" />
         
+        <!-- copy fedhf lib files to be compiled (no repo available)-->
+        <lib-file src="src/android/usbserial.jar"/>
+
+        <!-- import repo and compile them -->
+        <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
+              
     </platform>
 </plugin>
