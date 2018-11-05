@@ -1,7 +1,21 @@
 <?xml version='1.0' encoding='utf-8'?>
 <plugin id="cordova-plugin-chameleon" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
     <name>Chameleon</name>
-    <js-module name="Chameleon" src="www/Chameleon.js">
-        <clobbers target="cordova.plugins.Chameleon" />
+    <js-module name="Chameleon" src="www/chameleon.js">
+        <clobbers target="cordova.plugins.chameleon" />
     </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*" >
+            <feature name="Chameleon">
+                <param name="android-package" value="com.maxieds.chameleonminiusb.ChameleonPlugin" />
+            </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/*" >
+        </config-file>
+
+        <!-- copy Maxied file (no lib or repo available) -->
+        <source-file src="src/android/maxieds/ChameleonPlugin.java" target-dir="src/com/maxieds/chameleonminiusb/ChameleonPlugin" />
+        </platform>
 </plugin>
