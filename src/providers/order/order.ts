@@ -9,7 +9,7 @@ import {
 } from "ionic-angular";
 import { format } from "date-fns";
 import { map } from "rxjs/operators";
-import { create } from "domain";
+//import { create } from "domain"; //removed by FRED H to prevent building errorsY
 
 @Injectable()
 export class OrderProvider {
@@ -30,12 +30,12 @@ export class OrderProvider {
     totalProducts: Array<Product>;
     totalPrice: number;
   } = {
-    totalCustomer: 0,
-    totalNewCustomers: 0,
-    totalAddresses: 0,
-    totalProducts: [],
-    totalPrice: 0
-  };
+      totalCustomer: 0,
+      totalNewCustomers: 0,
+      totalAddresses: 0,
+      totalProducts: [],
+      totalPrice: 0
+    };
   public loading: Loading;
 
   constructor(
@@ -253,7 +253,7 @@ export class OrderProvider {
         buildings: myBuildings,
         label: `${_address.number} ${_address.street.toLowerCase()}, ${
           _address.city
-        } ${_address.postcode}`,
+          } ${_address.postcode}`,
         status: null,
         totalOrders: null
       };
