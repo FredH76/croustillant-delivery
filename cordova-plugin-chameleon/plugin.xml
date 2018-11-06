@@ -9,12 +9,37 @@
 
     <!-- android -->
     <platform name="android">
+
+        <!-- define plugin service name to use and java code to execute into android app-->
         <config-file target="res/xml/config.xml" parent="/*" >
             <feature name="Chameleon">
                 <param name="android-package" value="com.maxieds.chameleonminiusb.ChameleonPlugin" />
             </feature>
         </config-file>
-        <config-file target="AndroidManifest.xml" parent="/*" >
+
+        <!-- add specific authorisation to enable USB access -->
+        <config-file target="AndroidManifest.xml" parent="/*" >           
+            <!-- These are *EXTREMELY* important as the Chameleon Devices will not interact with the Android phone
+            over serial USB unless these permissions and intents are granted! -->
+            <uses-permission android:name="com.android.example.USB_PERMISSION" android:required="true"/>
+            <uses-feature android:name="android.hardware.usb.host" android:required="true"/> 
+        </config-file>
+        
+        <!-- insert new activity to detect USB connection-->
+        <config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
+            <!-- Again, these are *EXTREMELY* important entries to keep in the manifest file for working USB
+            recognition of the devices when they are hotplugged over the phone's USB port: -->
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+                <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            
+            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/chameleon_usb_device_filter"/>
+            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"
+                android:resource="@xml/chameleon_usb_device_filter"/>      
         </config-file>
 
         <!-- copy Maxied file (no lib or repo available) -->
@@ -26,11 +51,14 @@
         <source-file src="src/android/maxieds/LibraryLogging.java" target-dir="src/com/maxieds/chameleonminiusb" />
         <source-file src="src/android/maxieds/Utils.java" target-dir="src/com/maxieds/chameleonminiusb" />
         <source-file src="src/android/maxieds/XModem.java" target-dir="src/com/maxieds/chameleonminiusb" />
+
+        <!-- copy ressource file -->
+        <source-file src="src/android/maxieds/res/chameleon_usb_device_filter.xml" target-dir="res/xml" />
         
         <!-- copy fedhf lib files to be compiled (no repo available)-->
         <lib-file src="src/android/usbserial.jar"/>
 
-        <!-- import repo and compile them -->
+        <!-- import other (commons-lang) repo and compile them -->
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
               
     </platform>
