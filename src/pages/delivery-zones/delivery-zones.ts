@@ -29,7 +29,7 @@ export class DeliveryZonesPage {
 
   public testUSB() {
     console.log("Test USB clicked");
-    chameleon.coolMethod(" Fred", this.successUSB, this.errorUSB);
+    chameleon.coolMethod("hello", this.successUSB, this.errorUSB);
   }
 
   public successUSB(msg) {
