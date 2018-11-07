@@ -237,6 +237,8 @@ export class OrderProvider {
             id: cust.building.id_building,
             code: cust.building.code,
             hasBadge: cust.building.badge,
+            duplibadgeID: cust.building.duplibadgeid,
+            rebadgeID: cust.building.rebadgeid,
             hasElevator: cust.building.elevator,
             hasKey: cust.building.key,
             notes: null,
@@ -406,6 +408,8 @@ export interface Building {
   code: string;
   hasElevator: boolean;
   hasBadge: boolean;
+  duplibadgeID: string;
+  rebadgeID: string,
   hasKey: boolean;
   customers: Array<Customer>;
   comment: string;

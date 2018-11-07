@@ -16,8 +16,8 @@ export class ParklinkProvider {
 
   constructor(public http: HttpClient) {
     this.api_token = "4be9211ecd6286e1078c3ce7424ee0d71095944b";
-    this.rebadge_url = "https://api.rebadge.services";
-    this.duplibadge_url = "https://api.rebadge.services";
+    this.rebadge_url = "https://45.55.67.168"; //"https://api.rebadge.services";
+    this.duplibadge_url = "https://45.55.67.168"; //"https://api.rebadge.services";
   }
 
   /**
@@ -50,17 +50,20 @@ export class ParklinkProvider {
       // Send http request to download dump
       this.http
         .get<any>(url + "/public/fetch_dump.json", {
+          //responsetype : ResponseContentType.blo
           params: params
         })
         .subscribe(
           res => {
             if (res.result == "success" && res.session_key) {
-              resolve();
+              console.log("success" + res);
+              resolve("success");
             } else {
-              reject(res.error);
+              console.log("error" + res);
+              reject("error");
             }
           },
-          err => reject(err)
+          //err => reject(err)
         );
     });
   }

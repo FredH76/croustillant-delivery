@@ -49,6 +49,7 @@
       <ion-icon *ngIf="address.valid" item-start color="secondary" name="checkmark-circle"></ion-icon>
       <ion-icon *ngIf="address.issue" item-start color="danger" name="warning"></ion-icon>
       {{ address.label }}
+      <span *ngIf="address.buildings[0].hasBadge">B</span>
       <span item-end>(x{{address.totalOrders}})</span>
     </button>
   </ion-list>

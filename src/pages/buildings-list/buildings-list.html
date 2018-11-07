@@ -18,7 +18,7 @@
 </ion-header>
 
 
-<ion-content>
+<ion-content padding>
 
   <div [ngSwitch]="mode">
     <ion-list *ngSwitchCase="'1'">
@@ -36,22 +36,21 @@
       </ion-item>
     </ion-list>
     <ion-list *ngSwitchCase="'2'">
-      <button ion-item text-wrap *ngFor="let building of os.orders.addresses[addresseIndex].buildings; let i = index" (click)="next(i)">
+      <button ion-item text-wrap *ngFor="let building of os.orders.addresses[addresseIndex].buildings; let i = index"
+        (click)="next(i)">
         <ion-icon *ngIf="building.valid" item-start color="secondary" name="checkmark-circle"></ion-icon>
         <ion-icon *ngIf="building.notes || building.issue" item-start color="danger" name="warning"></ion-icon>
         <h1>{{ building.name }}</h1>
         <div *ngIf="building.code">Code : {{building.code}}</div>
-
-        <!-- <div *ngIf="building.hasBadge">Badge : {{building.hasBadge | formatBoolean}}</div> -->
-        <button *ngIf="building.hasBadge" class="badgeButton" (click)="downloadBadge(building)">Download badge</button>
-
-        <div *ngIf="building.hasBadge" class="badgeButton">
-          Badge : {{building.hasBadge | formatBoolean}}
-        </div>
+        <div *ngIf="building.hasBadge" class="badgeButton">Badge : {{building.hasBadge | formatBoolean}}</div>
         <div *ngIf="building.hasKey">Clé : {{building.hasKey | formatBoolean}}</div>
         <div *ngIf="building.hasElevator">Ascenseur : {{building.hasElevator | formatBoolean}}</div>
         <div *ngIf="building.comment">Indications : {{building.comment}}</div>
       </button>
+
+      <button *ngIf="hasBadge" margin-top ion-button block large class="badgeButton" (click)="downloadBadge()">Download
+        badge</button>
+
     </ion-list>
   </div>
 

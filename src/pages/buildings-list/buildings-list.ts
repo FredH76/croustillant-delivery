@@ -11,6 +11,9 @@ import { ParklinkProvider } from "../../providers/parklink/parklink";
 export class BuildingsListPage {
   public mode = "1";
   public customers: Array<Customer> = [];
+  public hasBadge: boolean = false;
+  public badgeID: string = "";
+  public badgeTYPE: string = "";
 
   constructor(
     public navCtrl: NavController,
@@ -24,6 +27,26 @@ export class BuildingsListPage {
         cust.order.deliveredTime;
         cust.notes;
       });
+
+      // Merge information about building badge (since this nformations is duplicated for each buildings)
+      // and store badge type
+      if (build.hasBadge) {
+        this.hasBadge = true;
+
+        if (build.rebadgeID) {
+          this.badgeID = build.rebadgeID
+          this.badgeTYPE = "REBADGE";
+        }
+
+        if (build.duplibadgeID) {
+          this.badgeID = build.duplibadgeID
+          this.badgeTYPE = "DUPLIBADGE";
+        }
+
+        // TEMPORARY DATA for DEBUG 
+        this.badgeID = "9268-7E00-846E";
+        this.badgeTYPE = "REBADGE"
+      }
     });
   }
 
@@ -41,8 +64,8 @@ export class BuildingsListPage {
   /**
    * download badge from parklink
    */
-  downloadBadge(building) {
-    this.pk.downloadBadge("92687E00846E", "DUPLIBADGE");
+  downloadBadge() {
+    this.pk.downloadBadge(this.badgeID, this.badgeTYPE);
   }
 }
 
