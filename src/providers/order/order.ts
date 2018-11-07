@@ -202,6 +202,7 @@ export class OrderProvider {
   }
 
   processData(data: any): Orders {
+    // TODO : store duplibadgeid et rebadgeid from here
     const addresses = data.map(_address => {
       const myBuildings: Array<Building> = [];
       _address.customers.forEach(cust => {

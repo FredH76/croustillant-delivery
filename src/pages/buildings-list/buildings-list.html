@@ -41,7 +41,13 @@
         <ion-icon *ngIf="building.notes || building.issue" item-start color="danger" name="warning"></ion-icon>
         <h1>{{ building.name }}</h1>
         <div *ngIf="building.code">Code : {{building.code}}</div>
-        <div *ngIf="building.hasBadge">Badge : {{building.hasBadge | formatBoolean}}</div>
+
+        <!-- <div *ngIf="building.hasBadge">Badge : {{building.hasBadge | formatBoolean}}</div> -->
+        <button *ngIf="building.hasBadge" class="badgeButton" (click)="downloadBadge(building)">Download badge</button>
+
+        <div *ngIf="building.hasBadge" class="badgeButton">
+          Badge : {{building.hasBadge | formatBoolean}}
+        </div>
         <div *ngIf="building.hasKey">Clé : {{building.hasKey | formatBoolean}}</div>
         <div *ngIf="building.hasElevator">Ascenseur : {{building.hasElevator | formatBoolean}}</div>
         <div *ngIf="building.comment">Indications : {{building.comment}}</div>

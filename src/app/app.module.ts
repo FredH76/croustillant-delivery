@@ -10,6 +10,7 @@ import { OrderProvider } from "../providers/order/order";
 import { HttpClientModule } from "@angular/common/http";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { IonicStorageModule } from "@ionic/Storage";
+import { ParklinkProvider } from '../providers/parklink/parklink';
 
 @NgModule({
   declarations: [MyApp],
@@ -42,7 +43,8 @@ import { IonicStorageModule } from "@ionic/Storage";
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     OrderProvider,
-    BarcodeScanner
+    BarcodeScanner,
+    ParklinkProvider
   ]
 })
 export class AppModule {}

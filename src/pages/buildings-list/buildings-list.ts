@@ -1,6 +1,7 @@
 import { Component, Pipe, PipeTransform } from "@angular/core";
-import { IonicPage, NavController, NavParams } from "ionic-angular";
+import { IonicPage, NavController, NavParams, Platform } from "ionic-angular";
 import { OrderProvider, Building, Customer } from "../../providers/order/order";
+import { ParklinkProvider } from "../../providers/parklink/parklink";
 
 @IonicPage()
 @Component({
@@ -14,7 +15,8 @@ export class BuildingsListPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    public os: OrderProvider
+    public os: OrderProvider,
+    public pk: ParklinkProvider
   ) {
     this.os.orders.addresses[this.addresseIndex].buildings.forEach(build => {
       build.customers.forEach(cust => {
@@ -34,6 +36,13 @@ export class BuildingsListPage {
       addresseIndex: this.addresseIndex,
       buildingIndex: id
     });
+  }
+
+  /**
+   * download badge from parklink
+   */
+  downloadBadge(building) {
+    this.pk.downloadBadge("92687E00846E", "DUPLIBADGE");
   }
 }
 
