@@ -1,5 +1,6 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { tap } from 'rxjs/operators';
 
 /*
   Generated class for the ParklinkProvider provider.
@@ -13,6 +14,8 @@ export class ParklinkProvider {
   slug: string;
   rebadge_url: string;
   duplibadge_url: string;
+  public badgeBuffer: any;
+  badgeFile: any;
 
   constructor(public http: HttpClient) {
     this.api_token = "4be9211ecd6286e1078c3ce7424ee0d71095944b";
@@ -44,26 +47,31 @@ export class ParklinkProvider {
 
       //TODO: add a spinner during download
 
-      // prepare to pass parameter to GET
+      // prepare to pass parameter to GET request
       let params = new HttpParams().set("api_token", this.api_token).set("slug", slug); //Create new HttpParams
+      //let headers = new HttpHeaders().set('Content-Type', 'application/octet-stream');
 
       // Send http request to download dump
       this.http
-        .get<any>(url + "/public/fetch_dump.json", {
-          //responsetype : ResponseContentType.blo
+        .get(url + "/public/fetch_dump.json", {
+          responseType: 'blob',
           params: params
         })
         .subscribe(
-          res => {
-            if (res.result == "success" && res.session_key) {
-              console.log("success" + res);
-              resolve("success");
-            } else {
-              console.log("error" + res);
-              reject("error");
-            }
+          blob => {
+
+            // read blob
+            var myReader = new FileReader();
+            myReader.readAsArrayBuffer(blob)
+
+            // store result
+            myReader.addEventListener("loadend", function (event) {
+              var buffer = myReader.result; //arraybuffer object
+              var badgeBuffer = new Uint8Array(buffer);
+              resolve(badgeBuffer);
+            });
           },
-          //err => reject(err)
+          err => reject(err)
         );
     });
   }

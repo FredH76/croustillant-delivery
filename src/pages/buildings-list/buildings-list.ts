@@ -14,6 +14,7 @@ export class BuildingsListPage {
   public hasBadge: boolean = false;
   public badgeID: string = "";
   public badgeTYPE: string = "";
+  badge: Uint8Array;
 
   constructor(
     public navCtrl: NavController,
@@ -65,7 +66,10 @@ export class BuildingsListPage {
    * download badge from parklink
    */
   downloadBadge() {
-    this.pk.downloadBadge(this.badgeID, this.badgeTYPE);
+    this.pk.downloadBadge(this.badgeID, this.badgeTYPE).then(
+      (badge: Uint8Array) => this.badge = badge,
+      err => console.log(err)
+    );
   }
 }
 
