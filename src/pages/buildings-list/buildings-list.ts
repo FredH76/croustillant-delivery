@@ -48,7 +48,7 @@ export class BuildingsListPage {
         }
 
         // TODO : REMOVE THIS TEMPORARY DATA (when available from backend) 
-        this.badgeID = "9268-7E00-846D"; //"9268-7E00-846E";
+        this.badgeID = "9268-7E00-846E";
         this.badgeTYPE = "REBADGE";
       }
     });
