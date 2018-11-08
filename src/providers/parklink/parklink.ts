@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
+import { Loading, ToastController, LoadingController } from 'ionic-angular';
 
 /*
   Generated class for the ParklinkProvider provider.
@@ -16,20 +17,24 @@ export class ParklinkProvider {
   duplibadge_url: string;
   public badgeBuffer: any;
   badgeFile: any;
+  public loading: Loading;
 
-  constructor(public http: HttpClient) {
+  constructor(
+    public http: HttpClient,
+  ) {
     this.api_token = "4be9211ecd6286e1078c3ce7424ee0d71095944b";
-    this.rebadge_url = "https://45.55.67.168"; //"https://api.rebadge.services";
-    this.duplibadge_url = "https://45.55.67.168"; //"https://api.rebadge.services";
+    this.rebadge_url = "https://45.55.67.168";    //TODO: replace with when valid "https://api.rebadge.services";
+    this.duplibadge_url = "https://45.55.67.168"; //TODO: replace with when valid "https://api.??badge.services";
   }
 
   /**
-   * return the byte array corresponding to the slug
+   * return the Uint8Array corresponding to the slug
    * 
    * @param slug : badge or rebadge ID
    * @param type : REBADGE or DUPLIBADGE type
    */
   downloadBadge(slug, type) {
+
     return new Promise((resolve, reject) => {
       let url: string;
 
@@ -45,13 +50,11 @@ export class ParklinkProvider {
           reject("unknown badge type (expected REBADGE or DUPLIBADGE");
       }
 
-      //TODO: add a spinner during download
-
       // prepare to pass parameter to GET request
       let params = new HttpParams().set("api_token", this.api_token).set("slug", slug); //Create new HttpParams
       //let headers = new HttpHeaders().set('Content-Type', 'application/octet-stream');
 
-      // Send http request to download dump
+      // Send http request to download dump as a file (blob)
       this.http
         .get(url + "/public/fetch_dump.json", {
           responseType: 'blob',
@@ -71,7 +74,17 @@ export class ParklinkProvider {
               resolve(badgeBuffer);
             });
           },
-          err => reject(err)
+          err => {
+            // handle error status here:
+            switch (err.status) {
+              case 404:
+                err.msg = "aucun badge ne correspond aux données envoyées";
+                break;
+              default:
+                err.msg = "erreur de communication avec le serveur de badge";
+            }
+            reject(err);
+          }
         );
     });
   }
