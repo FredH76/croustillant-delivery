@@ -48,11 +48,8 @@
         <div *ngIf="building.comment">Indications : {{building.comment}}</div>
       </button>
 
-      <button *ngIf="hasBadge" margin-top ion-button block large class="badgeButton" (click)="downloadBadge(badgeID,badgeTYPE)">
+      <button *ngIf="hasBadge" margin-top ion-button block large class="badgeButton" (click)="loadBadge()">
         Charger Badge
-      </button>
-      <button *ngIf="hasBadge" margin-top ion-button block large class="badgeButton" (click)="transferBadge(badgeArray)">
-        Transferer Badge
       </button>
 
     </ion-list>

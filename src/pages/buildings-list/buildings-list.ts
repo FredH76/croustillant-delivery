@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, LoadingController, ToastController
 import { OrderProvider, Building, Customer } from "../../providers/order/order";
 import { ParklinkProvider } from "../../providers/parklink/parklink";
 import chameleon from '../../../plugins/cordova-plugin-chameleon/www/chameleon';
+import { isPresent } from "ionic-angular/umd/util/util";
 
 @IonicPage()
 @Component({
@@ -35,7 +36,6 @@ export class BuildingsListPage {
       });
 
       // Merge information about building badges (since these informations are duplicated for each buildings)
-      // and store badge type
       if (build.hasBadge) {
         this.hasBadge = true;
 
@@ -49,9 +49,10 @@ export class BuildingsListPage {
           this.badgeTYPE = "DUPLIBADGE";
         }
 
-        // TODO : REMOVE THIS TEMPORARY DATA (when available from backend) 
+        /* TODO : REMOVE THIS TEMPORARY DATA (when available from backend) 
         this.badgeID = "9268-7E00-846E";
         this.badgeTYPE = "REBADGE";
+        */
       }
     });
   }
@@ -67,14 +68,27 @@ export class BuildingsListPage {
     });
   }
 
-  /**
-   * DOWNLOAD BADGE FROM PARKLINK
+  /*************************************************************************************
+   * LOAD BADGE on button click (from parklink to app to chameleon)
+   ************************************************************************************/
+  loadBadge() {
+    // Step 1: download badge from parklink
+    this.downloadBadgeArray(this.badgeID, this.badgeTYPE).then(
+      badgeArray => {
+        // Step 2: transfer badgeArray into chameleon
+        this.transferBadgeToCham();
+      }
+    );
+  }
+
+  /**************************************************************************************
+   * DOWNLOAD BADGE ARRAY from PARKLINK
    * (set a promise to allow chaining functions if needed)
    * 
    * @param badgeID : badge id in XXXX-XXXX-XXXX or XXXXXXXXXXXX format
    * @param badgeTYPE : badge type (REBADGE or DUPLIBADGE)
-   */
-  downloadBadge(badgeID, badgeTYPE) {
+   *************************************************************************************/
+  downloadBadgeArray(badgeID, badgeTYPE) {
     return new Promise((resolve, reject) => {
 
       // test data availability
@@ -86,7 +100,7 @@ export class BuildingsListPage {
       }
 
       // display a spinner
-      this.startLoading();
+      this.startLoading("téléchargement du badge depuis parklink...");
 
       // download badge array from parklink
       this.pk.downloadBadge(badgeID, badgeTYPE).then(
@@ -94,7 +108,7 @@ export class BuildingsListPage {
           this.badgeArray = badge;
           this.stopLoading();
           this.presentToastSuccess("Téléchargement réussit");
-          resolve();
+          resolve(badge);
         },
         (err) => {
           this.stopLoading();
@@ -105,28 +119,51 @@ export class BuildingsListPage {
     });
   }
 
-  /**
-   * TRANSFER BADGE FROM APP TO CHAMELEON
+  /**************************************************************************************
+   * TRANSFER BADGE from APP to CHAMELEON
    * 
    * @param badgeArray : badge array in Uint8Array format
-   */
-  transferBadge(badge) {
-
-    // test presence of USB
-    chameleon.isPresent(
+   *************************************************************************************/
+  transferBadgeToCham() {
+    // initialize USB driver
+    chameleon.initialize(
       null,
-      success => console.log("USB IS CONNECTED " + success),
-      error => console.log("USB NOT CONNECTED " + error)
+      success => this.isPresent(),
+      error => this.presentToastError("Le driver n'a pas pu être initialisé. Transfert annulé.")
     )
-
-    // initialize USB
-
-    // send badge
-
-    // close USB
-
   }
 
+  // test if usb is connected
+  private isPresent() {
+    chameleon.isPresent(
+      null,
+      success => this.sendBadge(),
+      error => {
+        this.presentToastError("Le Chameleon n'est pas connecté. Transfert annulé.");
+        this.closeUSB();
+      }
+    )
+  };
+
+  // send badge (préviously dowloaded and stored in this.badgeArray)
+  private sendBadge() {
+    chameleon.uploadArray(
+      this.badgeArray,
+      success => {
+        this.presentToastSuccess("Chargement du Badge réussit");
+        this.closeUSB()
+      },
+      error => {
+        this.presentToastError("Le chargement n'a pu être effectué. Transfert annulé.");
+        this.closeUSB();
+      }
+    )
+  };
+
+  // close USB
+  private closeUSB() {
+    chameleon.shutdown();
+  }
 
   presentToastSuccess(msg?: string) {
     let toast = this.toastCtrl.create({
@@ -153,10 +190,11 @@ export class BuildingsListPage {
     this.loading.dismiss();
   }
 
-  startLoading() {
+  startLoading(msg) {
     this.loading = this.loadingCtrl.create({
       spinner: "dots",
-      dismissOnPageChange: true
+      dismissOnPageChange: true,
+      content: msg
     });
     this.loading.present();
   }
