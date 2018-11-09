@@ -33,13 +33,13 @@ export class ParklinkProvider {
    * @param slug : badge or rebadge ID
    * @param type : REBADGE or DUPLIBADGE type
    */
-  downloadBadge(slug, type) {
+  downloadBadge(slug, badgeType) {
 
     return new Promise((resolve, reject) => {
       let url: string;
 
       // select the proper url according to badge type
-      switch (type) {
+      switch (badgeType) {
         case "REBADGE":
           url = this.rebadge_url;
           break;
@@ -51,8 +51,10 @@ export class ParklinkProvider {
       }
 
       // prepare to pass parameter to GET request
-      let params = new HttpParams().set("api_token", this.api_token).set("slug", slug); //Create new HttpParams
-      //let headers = new HttpHeaders().set('Content-Type', 'application/octet-stream');
+      let params = new HttpParams()
+        .set("api_token", this.api_token)
+        .set("slug", slug);
+      //.set("output", outputType); // other possible format: 'json' or
 
       // Send http request to download dump as a file (blob)
       this.http
