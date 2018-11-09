@@ -10,6 +10,8 @@ import { ParklinkProvider } from "../../providers/parklink/parklink";
   templateUrl: "delivery-zones.html"
 })
 export class DeliveryZonesPage {
+  testResult: string;
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -29,9 +31,29 @@ export class DeliveryZonesPage {
   }
 
 
-  public testUSB() {
-    console.log("Test USB clicked");
-    chameleon.coolMethod("hello", this.successUSB, this.errorUSB);
+  public testUSBpresent() {
+    console.log("Test USB PRESENT clicked");
+    chameleon.isPresent(null, suc => this.successUSB(suc), err => this.errorUSB(err));
+  }
+
+  public testUSBinitialize() {
+    console.log("Test USB INITIALIZE clicked");
+    chameleon.initialize(null, suc => this.successUSB(suc), err => this.errorUSB(err));
+  }
+
+  public testUSBuploadArray() {
+    console.log("Test USB UPLOAD ARRAY clicked");
+    let badgeID = "9268-7E00-846E";
+    let badgeTYPE = "REBADGE";
+    this.pk.downloadBadge(badgeID, badgeTYPE).then(
+      badgeArray => chameleon.uploadArray(badgeArray, suc => this.successUSB(suc), err => this.errorUSB(err)),
+      err => this.errorUSB(err)
+    );
+  }
+
+  public testUSBshutdown() {
+    console.log("Test USB SHUTDOWN clicked");
+    chameleon.shutdown(null, suc => this.successUSB(suc), err => this.errorUSB(err));
   }
 
   public testDownload() {
@@ -43,12 +65,12 @@ export class DeliveryZonesPage {
   }
 
   public successUSB(msg) {
-    //connectResult = "YES : USB CONNECTED !";
+    this.testResult = msg;
     console.debug(msg);
   }
 
   public errorUSB(msg) {
-    //this.connectResult = "NO : USB NOT CONNECTED ..";
+    this.testResult = msg;
     console.error(msg);
   }
 }

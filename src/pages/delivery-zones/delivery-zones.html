@@ -10,17 +10,20 @@
 </ion-header>
 
 
-<ion-content>
+<ion-content padding>
   <ion-list>
     <button ion-item *ngFor="let zone of os.zones" (click)="selectZone(zone.id)">
       {{ zone.name }}
     </button>
   </ion-list>
 
-  <!-- FOR TEMPORARY TEST PURPOSE. TO BE DELETED-->testDownload
-  <button margin-top ion-button block large (click)="testUSB()">Test USB</button>
-  <button margin-top ion-button block large (click)="testDownload()">Test Download</button>
-  {{connectResult}}
+  <!-- FOR TEMPORARY TEST PURPOSE. TO BE DELETED-->
+  <button margin-top ion-button block large (click)="testUSBpresent()">Test USB present</button>
+  <button margin-top ion-button block large (click)="testUSBinitialize()">Test USB initialize</button>
+  <button margin-top ion-button block large (click)="testUSBuploadArray()">Test USB upload array</button>
+  <button margin-top ion-button block large (click)="testUSBshutdown()">Test USB shutdown</button>
+  <br>
+  {{testResult}}
   <!-- END OF TEST-->
 
 </ion-content>

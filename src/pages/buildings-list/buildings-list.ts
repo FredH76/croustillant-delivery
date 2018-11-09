@@ -2,6 +2,8 @@ import { Component, Pipe, PipeTransform } from "@angular/core";
 import { IonicPage, NavController, NavParams, LoadingController, ToastController, Loading } from "ionic-angular";
 import { OrderProvider, Building, Customer } from "../../providers/order/order";
 import { ParklinkProvider } from "../../providers/parklink/parklink";
+import chameleon from '../../../plugins/cordova-plugin-chameleon/www/chameleon';
+
 @IonicPage()
 @Component({
   selector: "page-buildings-list",
@@ -32,7 +34,7 @@ export class BuildingsListPage {
         cust.notes;
       });
 
-      // Merge information about building badge (since this informations are duplicated for each buildings)
+      // Merge information about building badges (since these informations are duplicated for each buildings)
       // and store badge type
       if (build.hasBadge) {
         this.hasBadge = true;
@@ -68,13 +70,14 @@ export class BuildingsListPage {
   /**
    * DOWNLOAD BADGE FROM PARKLINK
    * (set a promise to allow chaining functions if needed)
+   * 
    * @param badgeID : badge id in XXXX-XXXX-XXXX or XXXXXXXXXXXX format
    * @param badgeTYPE : badge type (REBADGE or DUPLIBADGE)
    */
   downloadBadge(badgeID, badgeTYPE) {
     return new Promise((resolve, reject) => {
 
-      // test la presence de données
+      // test data availability
       if (!badgeID || !badgeTYPE) {
         let errMsg: string = "Echec Téléchargement. Il manque le badge ID et/ou son type";
         this.presentToastError(errMsg);
@@ -91,7 +94,7 @@ export class BuildingsListPage {
           this.badgeArray = badge;
           this.stopLoading();
           this.presentToastSuccess("Téléchargement réussit");
-          resolve(badge);
+          resolve();
         },
         (err) => {
           this.stopLoading();
@@ -101,6 +104,29 @@ export class BuildingsListPage {
       );
     });
   }
+
+  /**
+   * TRANSFER BADGE FROM APP TO CHAMELEON
+   * 
+   * @param badgeArray : badge array in Uint8Array format
+   */
+  transferBadge(badge) {
+
+    // test presence of USB
+    chameleon.isPresent(
+      null,
+      success => console.log("USB IS CONNECTED " + success),
+      error => console.log("USB NOT CONNECTED " + error)
+    )
+
+    // initialize USB
+
+    // send badge
+
+    // close USB
+
+  }
+
 
   presentToastSuccess(msg?: string) {
     let toast = this.toastCtrl.create({
