@@ -121,8 +121,6 @@ export class BuildingsListPage {
 
   /**************************************************************************************
    * TRANSFER BADGE from APP to CHAMELEON
-   * 
-   * @param badgeArray : badge array in Uint8Array format
    *************************************************************************************/
   transferBadgeToCham() {
     // initialize USB driver
@@ -165,6 +163,9 @@ export class BuildingsListPage {
     chameleon.shutdown();
   }
 
+  /**************************************************************************************
+   * IHM functions for LOADING and MESSAGE display
+   *************************************************************************************/
   presentToastSuccess(msg?: string) {
     let toast = this.toastCtrl.create({
       message: msg || "Ok",

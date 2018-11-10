@@ -23,8 +23,8 @@ export class ParklinkProvider {
     public http: HttpClient,
   ) {
     this.api_token = "4be9211ecd6286e1078c3ce7424ee0d71095944b";
-    this.rebadge_url = "https://45.55.67.168";    //TODO: replace with when valid "https://api.rebadge.services";
-    this.duplibadge_url = "https://45.55.67.168"; //TODO: replace with when valid "https://api.??badge.services";
+    this.rebadge_url = "https://api.rebadge.services"; //"https://45.55.67.168";    //TODO: replace when valid 
+    this.duplibadge_url = "https://api.rebadge.services"; // "https://45.55.67.168"; //TODO: replace when valid 
   }
 
   /**

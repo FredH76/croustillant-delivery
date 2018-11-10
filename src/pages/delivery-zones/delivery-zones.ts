@@ -30,7 +30,7 @@ export class DeliveryZonesPage {
     });
   }
 
-
+  /* FOR TEMPORARY TEST PURPOSE. TO BE DELETED 
   public testUSBpresent() {
     console.log("Test USB PRESENT clicked");
     chameleon.isPresent(null, suc => this.successUSB(suc), err => this.errorUSB(err));
@@ -73,4 +73,5 @@ export class DeliveryZonesPage {
     this.testResult = msg;
     console.error(msg);
   }
+  */ // END OF TEST
 }
