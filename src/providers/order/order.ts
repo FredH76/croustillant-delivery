@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Storage } from "@ionic/Storage";
+import { Storage } from "@ionic/storage";
 import {
   Platform,
   LoadingController,
@@ -14,11 +14,13 @@ import { map } from "rxjs/operators";
 @Injectable()
 export class OrderProvider {
   apiUrl: string;
+  mapotempoApiUrl: string;
   zones: any;
   zoneId: any;
   date = new Date().toISOString();
   sessionKey: any;
-  public orders: Orders;
+  loggedInfo: LoggedInfo;
+  public orders: Array<Order>;
   public counter = {
     current: 0,
     total: 0
@@ -56,23 +58,16 @@ export class OrderProvider {
   submit() {
     let report = "";
     let orders = [];
-    this.orders.addresses.forEach(add => {
-      add.buildings.forEach(build => {
-        if (build.notes)
-          report += "Building " + build.id + "\n" + build.notes + "\n\n";
+    this.orders.forEach(o => {
+      if (o.customer.notes)
+        report += "Commande " + o.id + " / Client " + o.customer.id + " / Building " + o.address.buildingId + "\n" + o.customer.notes + "\n\n";
 
-        build.customers.forEach(cust => {
-          if (cust.notes)
-            report += "Client " + cust.id + "\n" + cust.notes + "\n\n";
-
-          if (cust.order.deliveredTime) {
-            orders.push({
-              id: cust.order.id,
-              date: cust.order.deliveredTime.toISOString()
-            });
-          }
+      if (o.valid) {
+        orders.push({
+          id: o.id,
+          date: o.deliveredTime
         });
-      });
+      }
     });
     console.log("report :");
     console.log(report);
@@ -86,12 +81,12 @@ export class OrderProvider {
           report: report
         })
         .subscribe(
-          res => {
-            console.log(res);
-            if (res.result == "success") resolve();
-            else reject(res.error);
-          },
-          err => reject(err)
+        res => {
+          console.log(res);
+          if (res.result == "success") resolve();
+          else reject(res.error);
+        },
+        err => reject(err)
         );
     });
   }
@@ -140,15 +135,21 @@ export class OrderProvider {
 
     return this.storage.get("sessionKey_delivery").then(res => {
       this.sessionKey = res;
+      this.storage.get("loggedInfo").then((loggedInfo: LoggedInfo) => {
+        this.loggedInfo = loggedInfo;
+      });
       // this.sessionInitialized$.next(true);
       console.log("session loaded : ", res);
       return Promise.resolve(res);
     });
   }
 
-  setSession(sessionKey: string) {
+  setSession(sessionKey: string, loggedInfo: LoggedInfo) {
     this.sessionKey = sessionKey;
-    return this.storage.set("sessionKey_delivery", sessionKey);
+    this.loggedInfo = loggedInfo;
+    return this.storage.set("sessionKey_delivery", sessionKey).then(() => {
+      return this.storage.set("loggedInfo", loggedInfo);
+    });
   }
 
   login(email, password) {
@@ -159,18 +160,22 @@ export class OrderProvider {
           password: password
         })
         .subscribe(
-          res => {
-            if (res.result == "success" && res.session_key) {
-              this.setSession(res.session_key).then(() => {
-                this.init()
-                  .then(() => resolve())
-                  .catch(err => reject(err));
-              });
-            } else {
-              reject(res.error);
-            }
-          },
-          err => reject(err)
+        res => {
+          if (res.result == "success" && res.session_key) {
+            this.setSession(res.session_key, {
+              email: res.email,
+              mapboxApiKey: res.mapbox_api_key,
+              mapotempoApiKey: res.mapotempo_api_key
+            }).then(() => {
+              this.init()
+                .then(() => resolve())
+                .catch(err => reject(err));
+            });
+          } else {
+            reject(res.error);
+          }
+        },
+        err => reject(err)
         );
     });
   }
@@ -201,70 +206,65 @@ export class OrderProvider {
     });
   }
 
-  processData(data: any): Orders {
-    // TODO : store duplibadgeid et rebadgeid from here
-    const addresses = data.map(_address => {
-      const myBuildings: Array<Building> = [];
-      _address.customers.forEach(cust => {
-        const index = myBuildings.findIndex(
-          _build => _build.id == cust.building.id_building
-        );
-        const customer = {
-          id: cust.id_customer,
-          flatNumber: cust.apartment_number,
-          floor: cust.floor,
-          infos: cust.door_information,
-          isNew: cust.is_new,
-          name: cust.name,
-          notes: "",
-          order: {
-            state: cust.orders[0].state,
-            deliveredTime: null,
-            id: cust.orders[0].id,
-            totalPrice: null,
-            products: cust.orders[0].product_list.map(_product => {
-              return {
-                name: _product.product_name,
-                productId: _product.id_product,
-                quantity: _product.quantity,
-                price: _product.unit_price
-              };
-            })
-          }
-        };
-        if (index == -1) {
-          myBuildings.push({
-            id: cust.building.id_building,
-            code: cust.building.code,
-            hasBadge: cust.building.badge,
-            duplibadgeID: cust.building.duplibadgeid,
-            rebadgeID: cust.building.rebadgeid,
-            hasElevator: cust.building.elevator,
-            hasKey: cust.building.key,
-            notes: null,
-            comment: cust.building.comment,
-            name: cust.building.name,
-            customers: [customer],
-            valid: false,
-            issue: false
-          });
-        } else {
-          myBuildings[index].customers.push(customer);
-        }
-      });
-      return {
-        buildings: myBuildings,
-        label: `${_address.number} ${_address.street.toLowerCase()}, ${
-          _address.city
-          } ${_address.postcode}`,
-        status: null,
-        totalOrders: null
-      };
-    });
+  processData(data: Array<ApiOrder>): Array<Order> {
 
-    return {
-      addresses: addresses
-    };
+    const returningOrders = new Array<Order>();
+    data.forEach(a => {
+      a.customers.forEach(c => {
+        const addressToUse: Address = {
+          label: `${a.number} ${a.street.toLowerCase()}, ${
+            a.city
+            } ${a.postcode}`,
+          city: a.city,
+          number: a.number,
+          postcode: a.postcode,
+          street: a.street,
+          buildingId: c.building.id_building,
+          issue: false,
+          comment: c.building.comment,
+          name: c.building.name,
+          code: c.building.code,
+          hasElevator: c.building.elevator,
+          hasBadge: c.building.badge,
+          duplibadgeID: c.building.duplibadgeid,
+          rebadgeID: c.building.rebadgeid,
+          hasKey: c.building.key
+        };
+        const customerToUse: Customer = {
+          doorInformation: c.door_information,
+          flatNumber: c.apartment_number,
+          floor: c.floor,
+          id: c.id_customer,
+          isNew: c.is_new,
+          name: c.name,
+          notes: ""
+        };
+        c.orders.forEach(o => {
+          const productList = new Array<Product>();
+          o.product_list.forEach(p => {
+            productList.push({
+              productId: p.id_product.toString(),
+              name: p.product_name,
+              price: parseFloat(p.unit_price),
+              quantity: p.quantity
+            })
+          });
+          returningOrders.push({
+            id: o.id,
+            created: o.created,
+            deliveredTime: o.delivered,
+            products: productList,
+            reference: o.reference,
+            state: o.state,
+            address: addressToUse,
+            customer: customerToUse,
+            valid: false
+          });
+        });
+      });
+    });
+    return returningOrders;
+
   }
 
   getOrders() {
@@ -277,21 +277,21 @@ export class OrderProvider {
         })
         .pipe(map(this.processData))
         .subscribe(
-          res => {
-            this.orders = res;
-            this.calculateTotal();
-            this.counter.total = this.generalInformations.totalCustomer;
-            resolve();
-          },
-          err => {
-            console.log(err);
-            reject(err);
-          }
+        res => {
+          this.orders = res;
+          this.calculateTotal();
+          this.counter.total = this.generalInformations.totalCustomer;
+          resolve();
+        },
+        err => {
+          console.log(err);
+          reject(err);
+        }
         );
     });
   }
 
-  getOrdersOld() {
+  /* getOrdersOld() {
     console.log("getOrders...");
     return new Promise((resolve, reject) => {
       this.http.get<Orders>("assets/data/orders.json").subscribe(
@@ -306,104 +306,78 @@ export class OrderProvider {
         }
       );
     });
-  }
+  } */
 
   calculateTotal() {
     let totalCustomer = 0;
     let totalNewCustomers = 0;
     let totalProducts: Array<Product> = [];
     let totalPrice = 0;
-    this.orders.addresses.forEach(add => {
-      let totalOrders = 0;
-      add.buildings.forEach(bld => {
-        totalCustomer += bld.customers.length;
-        totalOrders += bld.customers.length;
-        totalNewCustomers += bld.customers.filter(cust => {
-          return cust.isNew == true;
-        }).length;
-        bld.customers.forEach(cust => {
-          let totalOrderPrice = 0;
-          cust.order.products.forEach(product => {
-            totalOrderPrice += product.price * product.quantity;
-            const index = totalProducts.findIndex(_product => {
-              return _product.productId == product.productId;
-            });
-            if (index == -1) {
-              totalProducts.push(JSON.parse(JSON.stringify(product)));
-            } else {
-              totalProducts[index].quantity += product.quantity;
-            }
-          });
-          cust.order.totalPrice = totalOrderPrice;
-          totalPrice += totalOrderPrice;
+
+    totalNewCustomers = this.orders.filter(o => o.customer.isNew).length;
+
+    this.orders.forEach(o => {
+      o.products.forEach(p => {
+        totalPrice += p.price * p.quantity;
+        const index = totalProducts.findIndex(_product => {
+          return _product.productId == p.productId;
         });
+        if (index == -1) {
+          totalProducts.push(JSON.parse(JSON.stringify(p)));
+        } else {
+          totalProducts[index].quantity += p.quantity;
+        }
       });
-      add.totalOrders = totalOrders;
     });
 
+    const totalAddresses = this.orders.filter((item, index, inputArray) => {
+      return inputArray.indexOf(item) == index;
+    }).length;
+
     this.generalInformations = {
-      totalAddresses: this.orders.addresses.length,
-      totalCustomer: totalCustomer,
+      totalAddresses: totalAddresses,
+      totalCustomer: this.orders.length,
       totalNewCustomers: totalNewCustomers,
       totalProducts: totalProducts,
-      totalPrice: totalPrice
+      totalPrice: Math.round(totalPrice * 100) / 100
     };
   }
 
-  calculateStatus(addresseIndex: number, buildingIndex: number) {
-    this.validateBuilding(addresseIndex, buildingIndex);
-    this.validateAddress(addresseIndex);
+  calculateStatus(order: Order) {
+    this.validateOrder(order);
   }
 
   updateTotalDelivered() {
-    let counter = 0;
-    this.orders.addresses.forEach(add => {
-      add.buildings.forEach(build => {
-        build.customers.forEach(cust => {
-          if (cust.order.deliveredTime) counter++;
-        });
-      });
-    });
-    this.counter.current = counter;
+    this.counter.current = this.orders.filter(o => o.valid).length;
   }
 
-  validateAddress(addresseIndex: number) {
-    const addresse = this.orders.addresses[addresseIndex];
-    addresse.issue = addresse.buildings.some(
-      building =>
-        building.issue || (building.notes != null && building.notes.length > 0)
-    );
-    addresse.valid = addresse.buildings.every(building => building.valid);
-  }
-
-  validateBuilding(addresseIndex: number, buildingIndex: number) {
-    const building = this.orders.addresses[addresseIndex].buildings[
-      buildingIndex
-    ];
-    building.issue = building.customers.some(cust => cust.notes.length != 0);
-    building.valid = building.customers.every(
-      cust => cust.order.deliveredTime != null
-    );
+  validateOrder(order: Order) {
+    order.address.issue = order.customer.notes != null && order.customer.notes.length > 0;
+    order.valid = order.deliveredTime != null && order.deliveredTime.length > 0 && order.deliveredTime != "0000-00-00 00:00:00";
+    
   }
 }
 
-export interface Orders {
-  addresses: Array<Address>;
+export interface Order {
+  id: number;
+  created: string;
+  products: Array<Product>;
+  reference: string;
+  state: string;
+  address: Address;
+  customer: Customer;
+  deliveredTime: string;
+  valid: boolean;
 }
 
 export interface Address {
   label: string;
-  valid: boolean;
+  city: string;
+  number: string;
+  postcode: string;
+  street: string;
+  buildingId: string;
   issue: boolean;
-  totalOrders: number;
-  buildings: Array<Building>;
-}
-
-export interface Building {
-  id: string;
-  notes: string;
-  issue: boolean;
-  valid: boolean;
   name: string;
   code: string;
   hasElevator: boolean;
@@ -411,8 +385,13 @@ export interface Building {
   duplibadgeID: string;
   rebadgeID: string,
   hasKey: boolean;
-  customers: Array<Customer>;
   comment: string;
+}
+
+export interface LoggedInfo {
+  email: string;
+  mapboxApiKey: string;
+  mapotempoApiKey: string;
 }
 
 export interface Product {
@@ -427,14 +406,55 @@ export interface Customer {
   name: string;
   floor: string;
   flatNumber: string;
-  infos: string;
+  doorInformation: string;
   isNew: boolean;
   notes: string;
-  order: {
-    id: string;
-    deliveredTime: Date;
-    products: Array<Product>;
-    state: string;
-    totalPrice: number;
-  };
+}
+
+export interface ApiOrder {
+  street: string;
+  number: string;
+  postcode: string;
+  city: string;
+  customers: [
+    {
+      id_customer: string;
+      id_address: string;
+      name: string;
+      floor: string;
+      door_information: string;
+      building: {
+        id_building: string;
+        name: string;
+        badge: boolean;
+        code: string;
+        key: boolean;
+        elevator: boolean;
+        duplibadgeid: string;
+        rebadgeid: string;
+        comment: string
+      };
+      apartment_number: string;
+      comment: string;
+      is_new: boolean;
+      orders: [
+        {
+          id: number;
+          reference: string;
+          state: string;
+          created: string;
+          delivered: string;
+          product_list: [
+            {
+              id_product: number;
+              product_name: string;
+              unit_price: string;
+              quantity: number;
+              total_price: string
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams, Platform } from "ionic-angular";
 import { Customer, OrderProvider } from "../../providers/order/order";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
+import { ViewController } from "ionic-angular/navigation/view-controller";
 
 @IonicPage()
 @Component({
@@ -17,30 +18,15 @@ export class ScannerPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    public os: OrderProvider,
     public platform: Platform,
-    private barcodeScanner: BarcodeScanner
+    private barcodeScanner: BarcodeScanner,
+    private viewCtrl: ViewController
   ) {
     this.scan();
-
-    this.customer = this.os.orders.addresses[this.addresseIndex].buildings[
-      this.buildingIndex
-    ].customers[this.customerIndex];
-  }
-
-  get addresseIndex() {
-    return this.navParams.get("addresseIndex");
-  }
-  get customerIndex() {
-    return this.navParams.get("customerIndex");
-  }
-
-  get buildingIndex() {
-    return this.navParams.get("buildingIndex");
+    this.customer = this.navParams.get("customer");
   }
 
   scan() {
-    // if (!this.platform.is("cordova")) return;
     this.barcodeScanner
       .scan()
       .then(res => {
@@ -61,9 +47,13 @@ export class ScannerPage {
   }
 
   next() {
-    this.navCtrl.push("OrderPage", {
+    this.viewCtrl.dismiss({
       ...this.navParams.data,
-      fromScanner: true
+      mustValidate: true
     });
+  }
+
+  cancel() {
+    this.viewCtrl.dismiss();
   }
 }

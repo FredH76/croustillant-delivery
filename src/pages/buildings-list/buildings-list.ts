@@ -1,9 +1,11 @@
 import { Component, Pipe, PipeTransform } from "@angular/core";
 import { IonicPage, NavController, NavParams, LoadingController, ToastController, Loading } from "ionic-angular";
-import { OrderProvider, Building, Customer } from "../../providers/order/order";
+import { OrderProvider, Customer } from "../../providers/order/order";
 import { ParklinkProvider } from "../../providers/parklink/parklink";
-import chameleon from '../../../plugins/cordova-plugin-chameleon/www/chameleon';
+//import chameleon from '../../../plugins/cordova-plugin-chameleon/www/chameleon';
+declare var chameleon: any;
 import { isPresent } from "ionic-angular/umd/util/util";
+import { MapotempoProvider } from "../../providers/mapotempo/mapotempo";
 
 @IonicPage()
 @Component({
@@ -22,7 +24,8 @@ export class BuildingsListPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    public os: OrderProvider,
+    public os: any,
+    public mapotempo: MapotempoProvider,
     public pk: ParklinkProvider,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController

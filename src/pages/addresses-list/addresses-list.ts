@@ -5,7 +5,8 @@ import {
   NavParams,
   AlertController
 } from "ionic-angular";
-import { OrderProvider, Address, Building } from "../../providers/order/order";
+import { OrderProvider, Address } from "../../providers/order/order";
+import { MapotempoProvider } from "../../providers/mapotempo/mapotempo";
 
 @IonicPage()
 @Component({
@@ -15,32 +16,24 @@ import { OrderProvider, Address, Building } from "../../providers/order/order";
 export class AddressesListPage {
   public addresses;
   public mode = "1";
+  public route;
+  public rawOrders: any;
 
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     public os: OrderProvider,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private mapotempo: MapotempoProvider
   ) {
-    this.init();
+    this.route = this.navParams.get("route");
   }
 
-  init() {
-    this.os.startLoading();
-    this.os.getOrders().then(() => {
-      this.addresses = this.os.orders.addresses;
-      this.os.stopLoading();
-    });
-  }
 
-  reorderItems(indexes) {
-    let element = this.os.orders.addresses[indexes.from];
-    this.os.orders.addresses.splice(indexes.from, 1);
-    this.os.orders.addresses.splice(indexes.to, 0, element);
-  }
 
-  next(index) {
-    this.navCtrl.push("BuildingsListPage", { addresseIndex: index });
+  next(stop: any) {
+    if (!stop.foundOrder) return;
+    this.navCtrl.push("OrderPage", { stop });
   }
 
   quit() {
@@ -50,12 +43,12 @@ export class AddressesListPage {
         {
           text: "Annuler",
           role: "cancel",
-          handler: () => {}
+          handler: () => { }
         },
         {
           text: "Confirmer",
           handler: () => {
-            this.navCtrl.setRoot("DeliveryZonesPage").then(() => {
+            this.navCtrl.setRoot("PlanningsPage").then(() => {
               location.reload();
             });
           }
@@ -72,7 +65,7 @@ export class AddressesListPage {
         {
           text: "Annuler",
           role: "cancel",
-          handler: () => {}
+          handler: () => { }
         },
         {
           text: "Confirmer",
@@ -83,7 +76,7 @@ export class AddressesListPage {
               .then(() => {
                 this.os.presentToastSuccess("Synchronisé !");
                 setTimeout(() => {
-                  this.navCtrl.setRoot("DeliveryZonesPage").then(() => {
+                  this.navCtrl.setRoot("PlanningsPage").then(() => {
                     this.os.stopLoading();
                     location.reload();
                   });

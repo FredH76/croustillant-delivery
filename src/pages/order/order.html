@@ -1,48 +1,52 @@
 <ion-header>
+
   <ion-navbar>
-    <ion-title>({{os.counter.current}}/{{os.counter.total}}) Commande {{order.id}}</ion-title>
+    <ion-title>n° {{stop.order.id}}</ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="problem()">Problème</button>
+    </ion-buttons>
   </ion-navbar>
+
 </ion-header>
 
 
-<ion-content>
-  <div class="name">{{customer.name}}</div>
-  <div class="orders">
-    <div class="chip" *ngIf="customer.isNew">
-      <span class="element">1ère commande</span>
-    </div>
-    <div class="order" *ngFor="let product of order.products">
-      <span>{{product.name}}</span>
-      <span>x{{product.quantity}}</span>
-    </div>
-    <div class="total">
-      <span class="label">Total</span>
-      <span class="price">{{customer.order.totalPrice}}€</span>
-    </div>
+<ion-content *ngIf="stop">
+  <div id="map" style="width:100%; height:33%;">
   </div>
-  <ion-list margin-top>
-
-    <ion-item-group>
-      <ion-item>
-        Commande ID
-        <span item-content>{{order.id}}</span>
-      </ion-item>
-      <ion-item>
-        Client ID
-        <span item-content>{{customer.id}}</span>
-      </ion-item>
-      <ion-item *ngIf="customer.order.deliveredTime">Livré
-        <ion-icon item-start color="secondary" name="checkmark-circle"></ion-icon>
-        <span item-content>{{customer.order.deliveredTime | date:'short'}}</span>
-      </ion-item>
-      <button ion-item (click)="problem()">Note / Problème
-        <ion-icon *ngIf="customer.notes" item-start color="danger" name="warning"></ion-icon>
-        <ion-icon *ngIf="!customer.notes" item-start color="light" name="create"></ion-icon>
-      </button>
-    </ion-item-group>
-  </ion-list>
+  <ion-item text-wrap>
+    <ion-label>
+      <div id="client-id">
+        <span class="chip" *ngIf="stop.order.customer.isNew">nouveau</span>n° {{stop.order.customer.id}}</div>
+      <h2 class="bigger">{{stop.order.customer.name}}</h2>
+      <p>{{stop.order.address.label}}</p>
+    </ion-label>
+    <button ion-button icon-only round clear large item-end class="action-button" (click)="navigate()">
+      <ion-icon name="map"></ion-icon>
+    </button>
+  </ion-item>
+  <ion-item text-wrap>
+    <h2 class="bigger">{{stop.order.address.name}}</h2>
+    <p *ngIf="stop.order.address.code">code : {{ stop.order.address.code}}</p>
+    <p>{{ stop.order.address.hasElevator ? "Il y a un ascenseur" : "Pas d'ascenseur"}}</p>
+    <button ion-button icon-only round clear large item-end class="action-button" *ngIf="stop.order.address.hasKey">
+      <ion-icon name="key" item-end></ion-icon>
+    </button>
+    <button ion-button icon-only round clear large item-end class="action-button" *ngIf="stop.order.address.hasBadge" (click)="loadBadge()">
+      <img src="assets/icon/badge.png" class="img-icon">
+    </button>
+  </ion-item>
+  <ion-item text-wrap no-lines>
+    <h2 class="bigger">Étage : {{stop.order.customer.floor}}</h2>
+    <p>{{ stop.order.customer.doorInformation}}</p>
+  </ion-item>
 </ion-content>
 
-<ion-footer *ngIf="!customer.order.deliveredTime">
-  <button ion-button block large color="secondary" (click)="add()">Livrée</button>
+<ion-footer *ngIf="!stop.order.valid">
+  <button ion-button block color="yellow" padding (click)="scan()">
+    <ion-icon item-start name="qr-scanner" margin-right></ion-icon>Scanner</button>
+  <button ion-button block color="secondary" padding (click)="add()">Forcer validation</button>
+</ion-footer>
+<ion-footer *ngIf="stop.order.valid">
+  <button ion-button block color="secondary" padding>
+    <ion-icon item-start name="checkmark" margin-right></ion-icon>Livré : {{stop.order.deliveredTime | date:'dd/MM/yyyy HH:mm'}}</button>
 </ion-footer>

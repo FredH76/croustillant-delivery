@@ -3,6 +3,7 @@ import { Platform } from "ionic-angular";
 import { StatusBar } from "@ionic-native/status-bar";
 import { SplashScreen } from "@ionic-native/splash-screen";
 import { OrderProvider } from "../providers/order/order";
+import { MapotempoProvider } from "../providers/mapotempo/mapotempo";
 
 @Component({
   templateUrl: "app.html"
@@ -16,7 +17,8 @@ export class MyApp {
     platform: Platform,
     statusBar: StatusBar,
     splashScreen: SplashScreen,
-    os: OrderProvider
+    os: OrderProvider,
+    mapotempo: MapotempoProvider
   ) {
     platform.ready().then(() => {
       statusBar.styleDefault();
@@ -24,7 +26,9 @@ export class MyApp {
       os
         .init()
         .then(() => {
-          this.rootPage = "DeliveryZonesPage";
+          return mapotempo.init();
+        }).then(() => {
+          this.rootPage = "PlanningsPage";
           splashScreen.hide();
         })
         .catch(err => {

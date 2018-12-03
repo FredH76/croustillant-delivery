@@ -1,0 +1,19 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title *ngIf="planning">{{ planning.date | date:'dd/MM/yyyy' }}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  
+  <ion-list>
+    <button ion-item *ngFor="let route of routes" (click)="selectRoute(route)">
+      <h2>{{ route.ref || "Tournée sans nom" }}</h2>
+      <p>{{ route.distance / 1000  | number:'1.0-2'}} km</p>
+    </button>
+  </ion-list>
+  
+</ion-content>

@@ -1,0 +1,35 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Plannings</ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="logout()">Déconnexion</button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <ion-list>
+    <button ion-item *ngFor="let planning of plannings" (click)="selectPlanning(planning)">
+      <h2>{{ planning.name }}</h2>
+      <p>{{ planning.date | date:'dd/MM/yyyy' }}</p>
+    </button>
+  </ion-list>
+  <!-- TODO: faire une fonction de vérif -->
+  <ion-list *ngIf="os.loggedInfo && (os.loggedInfo.email === 'lemaildecyril@gmail.com' || os.loggedInfo.email === 'tanguy@croustillant.com')">
+    <ion-list-header>Administration Mapotempo
+    </ion-list-header>
+    <ion-item *ngIf="isLastExportLoading === true" text-wrap>
+      <ion-avatar item-start>
+        <ion-spinner></ion-spinner>
+      </ion-avatar>Chargement du dernier export en cours
+    </ion-item>
+    <ion-item *ngIf="isLastExportLoading !== true" text-wrap>
+      <h2 *ngIf="lastExport && lastExport.date">Dernier export: {{ lastExport.date | date : 'dd/MM/yyyy HH:mm' }}</h2>
+      <h2 *ngIf="!lastExport || !lastExport.date">Pas de données concernant le dernier export</h2>
+      <button ion-button clear item-end (click)="exportToMapotempo()">Exporter</button>
+    </ion-item>
+  </ion-list>
+</ion-content>

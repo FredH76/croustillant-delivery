@@ -5,7 +5,7 @@ import {
   NavParams,
   ModalController
 } from "ionic-angular";
-import { OrderProvider, Building, Customer } from "../../providers/order/order";
+import { OrderProvider, Customer } from "../../providers/order/order";
 
 @IonicPage()
 @Component({
@@ -13,13 +13,13 @@ import { OrderProvider, Building, Customer } from "../../providers/order/order";
   templateUrl: "appartements-list.html"
 })
 export class AppartementsListPage {
-  public building: Building;
+  public building: any;
   public customers: Array<Customer> = [];
 
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    public os: OrderProvider,
+    public os: any,
     public modalCtrl: ModalController
   ) {
     this.building = this.os.orders.addresses[this.addresseIndex].buildings[

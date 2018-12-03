@@ -3,7 +3,7 @@
     <ion-buttons start>
       <button ion-button (click)="quit()">Abandonner</button>
     </ion-buttons>
-    <ion-title>({{os.counter.current}}/{{os.counter.total}}) Tournée</ion-title>
+    <ion-title *ngIf="route && route.stops">({{os.counter.current}}/{{route.stops.length}}) Tournée</ion-title>
   </ion-navbar>
   <ion-toolbar mode="md">
     <ion-segment mode="md" [(ngModel)]="mode">
@@ -44,17 +44,24 @@
       </ion-item>
     </ion-item-group>
   </ion-list>
-  <ion-list *ngIf="mode == '2' && os.orders && os.orders.addresses" reorder="true" (ionItemReorder)="reorderItems($event)">
-    <button ion-item *ngFor="let address of os.orders.addresses; let i = index" (click)="next(i)">
-      <ion-icon *ngIf="address.valid" item-start color="secondary" name="checkmark-circle"></ion-icon>
-      <ion-icon *ngIf="address.issue" item-start color="danger" name="warning"></ion-icon>
-      {{ address.label }}
-      <span *ngIf="address.buildings[0].hasBadge">B</span>
-      <span item-end>(x{{address.totalOrders}})</span>
-    </button>
+  <ion-list *ngIf="mode == '2' && route.stops">
+    <div *ngFor="let stop of route.stops; let i = index;">
+      <button ion-item (click)="next(stop)" text-wrap *ngIf="stop.foundOrder === true">
+        <ion-icon *ngIf="stop.order.valid" item-start color="secondary" name="checkmark-circle"></ion-icon>
+        <ion-icon *ngIf="stop.order.address.issue" item-start color="danger" name="warning"></ion-icon>
+        <h2>{{stop.order.address.label}}</h2>
+        <p>{{stop.order.customer.name}}</p>
+        <ion-note item-end>n° {{ stop.order.id }}</ion-note>
+      </button>
+      <button ion-item (click)="next(stop)" text-wrap *ngIf="!stop.foundOrder === true">
+        <ion-icon item-start color="danger" name="warning"></ion-icon>
+        <h2>Impossible de trouver la commande Croustillant correspondant</h2>
+        <p>Destination: {{ stop.destination_ref }} / Commande: {{ stop.visit_ref }}</p>
+      </button>
+    </div>
   </ion-list>
 </ion-content>
 
 <ion-footer>
-  <button ion-button block large color="secondary" (click)="done()">Livraison terminée</button>
+  <button ion-button block large color="secondary" (click)="done()">Synchroniser tournée</button>
 </ion-footer>

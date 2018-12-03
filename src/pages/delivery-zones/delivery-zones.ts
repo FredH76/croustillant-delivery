@@ -1,8 +1,10 @@
 import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
 import { OrderProvider } from "../../providers/order/order";
-import chameleon from '../../../plugins/cordova-plugin-chameleon/www/chameleon';
+/* import chameleon from '../../../plugins/cordova-plugin-chameleon/www/chameleon'; */
+declare var chameleon: any;
 import { ParklinkProvider } from "../../providers/parklink/parklink";
+import { MapotempoProvider } from "../../providers/mapotempo/mapotempo";
 
 @IonicPage()
 @Component({
@@ -11,16 +13,31 @@ import { ParklinkProvider } from "../../providers/parklink/parklink";
 })
 export class DeliveryZonesPage {
   testResult: string;
+  plannings: any;
 
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     public os: OrderProvider,
+    public mapotempo: MapotempoProvider,
     public pk: ParklinkProvider
-  ) { }
+  ) {
+  }
+
+  ionViewDidLoad() {
+    this.mapotempo.getPlannings().then(res => {
+      this.plannings = res;
+    }).catch(err => {
+      console.log("Impossible de charger les plannings.");
+    })
+  }
 
   selectZone(id) {
     this.os.zoneId = id;
+    this.navCtrl.push("DatePage");
+  }
+
+  selectPlanning(id: string) {
     this.navCtrl.push("DatePage");
   }
 

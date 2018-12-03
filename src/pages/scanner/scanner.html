@@ -1,23 +1,30 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>scanner</ion-title>
+    <ion-title>Scanner</ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="cancel()">Annuler</button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <button ion-button block (click)="scan()">scanner</button>
+  <button ion-button block color="yellow" padding (click)="scan()" class="big">
+    <ion-icon item-start name="qr-scanner" margin-right></ion-icon>Scanner</button>
 
   <div *ngIf="error" class="error">{{error}}</div>
 
   <ion-item>
-    <ion-label floating>ID client</ion-label>
-    <ion-input [(ngModel)]="input_id"></ion-input>
+    <ion-label floating color="black">ID client</ion-label>
+    <ion-input [(ngModel)]="input_id" color="black"></ion-input>
   </ion-item>
   <div *ngIf="error2" class="error">{{error2}}</div>
-  <button ion-button block color="secondary" (click)="add()">Valider</button>
+  <button ion-button block color="secondary" (click)="add()">Valider n° client</button>
 
-  <button margin-top ion-button block color="secondary" (click)="next()">force suivant</button>
 </ion-content>
+
+<ion-footer>
+  <button ion-button block color="secondary" padding (click)="next()" class="big">Forcer validation</button>
+</ion-footer>

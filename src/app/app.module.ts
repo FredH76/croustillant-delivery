@@ -9,8 +9,11 @@ import { OrderProvider } from "../providers/order/order";
 
 import { HttpClientModule } from "@angular/common/http";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
-import { IonicStorageModule } from "@ionic/Storage";
+import { IonicStorageModule } from "@ionic/storage";
 import { ParklinkProvider } from '../providers/parklink/parklink';
+import { LaunchNavigator } from '@ionic-native/launch-navigator';
+import { BackgroundMode } from '@ionic-native/background-mode';
+import { MapotempoProvider } from '../providers/mapotempo/mapotempo';
 
 @NgModule({
   declarations: [MyApp],
@@ -44,7 +47,10 @@ import { ParklinkProvider } from '../providers/parklink/parklink';
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     OrderProvider,
     BarcodeScanner,
-    ParklinkProvider
+    ParklinkProvider,
+    LaunchNavigator,
+    BackgroundMode,
+    MapotempoProvider
   ]
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,9 +1,9 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>({{os.counter.current}}/{{os.counter.total}}) {{os.orders.addresses[addresseIndex].label}}</ion-title>
+    <ion-title class="big-title">n° {{customers[0].order.id}}</ion-title>
   </ion-navbar>
-
+  <!-- 
   <ion-toolbar mode="md">
     <ion-segment mode="md" [(ngModel)]="mode">
       <ion-segment-button value="1">
@@ -13,7 +13,7 @@
         Bâtiments
       </ion-segment-button>
     </ion-segment>
-  </ion-toolbar>
+  </ion-toolbar> -->
 
 </ion-header>
 
@@ -36,8 +36,7 @@
       </ion-item>
     </ion-list>
     <ion-list *ngSwitchCase="'2'">
-      <button ion-item text-wrap *ngFor="let building of os.orders.addresses[addresseIndex].buildings; let i = index"
-        (click)="next(i)">
+      <button ion-item text-wrap *ngFor="let building of os.orders.addresses[addresseIndex].buildings; let i = index" (click)="next(i)">
         <ion-icon *ngIf="building.valid" item-start color="secondary" name="checkmark-circle"></ion-icon>
         <ion-icon *ngIf="building.notes || building.issue" item-start color="danger" name="warning"></ion-icon>
         <h1>{{ building.name }}</h1>

@@ -10,11 +10,18 @@
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
   <ion-list>
     <button ion-item *ngFor="let zone of os.zones" (click)="selectZone(zone.id)">
       {{ zone.name }}
     </button>
+    <!-- <button ion-item *ngFor="let zone of os.mapotempoZones">
+      {{ zone.name }} (Mapotempo)
+    </button>
+    <button ion-item *ngFor="let plan of plannings" (click)="selectPlanning(plan.id)">
+      <h2>{{ plan.name }}</h2>
+      <p>{{ plan.date}}</p>
+    </button> -->
   </ion-list>
 
   <!-- FOR TEMPORARY TEST PURPOSE. TO BE DELETED 

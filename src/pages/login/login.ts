@@ -48,7 +48,7 @@ export class LoginPage {
     this.os
       .login(this.email.value, this.password.value)
       .then(() => {
-        this.navCtrl.setRoot("DeliveryZonesPage", null, {
+        this.navCtrl.setRoot("PlanningsPage", null, {
           animate: true,
           animation: "push",
           direction: "forward"
