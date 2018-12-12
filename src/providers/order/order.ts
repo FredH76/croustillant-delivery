@@ -352,9 +352,9 @@ export class OrderProvider {
   }
 
   validateOrder(order: Order) {
-    order.address.issue = order.customer.notes != null && order.customer.notes.length > 0;
+    order.address.issue = order.customer.notes != null && order.customer.notes !== "";
     order.valid = order.deliveredTime != null && order.deliveredTime.length > 0 && order.deliveredTime != "0000-00-00 00:00:00";
-    
+
   }
 }
 

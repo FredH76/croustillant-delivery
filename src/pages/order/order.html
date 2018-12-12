@@ -37,6 +37,7 @@
   </ion-item>
   <ion-item text-wrap no-lines>
     <h2 class="bigger">Étage : {{stop.order.customer.floor}}</h2>
+    <p *ngIf="stop.order.customer.flatNumber">Appartement n° {{ stop.order.customer.flatNumber}}</p>
     <p>{{ stop.order.customer.doorInformation}}</p>
   </ion-item>
 </ion-content>
