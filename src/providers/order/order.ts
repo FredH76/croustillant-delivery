@@ -1,15 +1,15 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Storage } from "@ionic/storage";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Storage } from '@ionic/storage';
 import {
   Platform,
   LoadingController,
   Loading,
   ToastController
-} from "ionic-angular";
-import { format } from "date-fns";
-import { map } from "rxjs/operators";
-//import { create } from "domain"; //removed by FRED H to prevent building errorsY
+} from 'ionic-angular';
+import { format } from 'date-fns';
+import { map } from 'rxjs/operators';
+// import { create } from "domain"; //removed by FRED H to prevent building errorsY
 
 @Injectable()
 export class OrderProvider {
@@ -25,7 +25,7 @@ export class OrderProvider {
     current: 0,
     total: 0
   };
-  public generalInformations: {
+  /* public generalInformations: {
     totalCustomer: number;
     totalNewCustomers: number;
     totalAddresses: number;
@@ -37,7 +37,7 @@ export class OrderProvider {
       totalAddresses: 0,
       totalProducts: [],
       totalPrice: 0
-    };
+    }; */
   public loading: Loading;
 
   constructor(
@@ -50,17 +50,18 @@ export class OrderProvider {
     // this.getOrders();
 
     // this.apiUrl = platform.is("cordova") ? "https://ps3.dev-ds.com/api" : "api";
-    this.apiUrl = platform.is("cordova")
-      ? "https://croustillant.com/api"
-      : "api";
+    this.apiUrl = platform.is('cordova')
+      ? 'https://croustillant.com/api'
+      : 'api';
   }
 
   submit() {
-    let report = "";
-    let orders = [];
+    let report = '';
+    const orders = [];
     this.orders.forEach(o => {
-      if (o.customer.notes)
-        report += "Commande " + o.id + " / Client " + o.customer.id + " / Building " + o.address.buildingId + "\n" + o.customer.notes + "\n\n";
+      if (o.customer.notes) {
+        report += 'Commande ' + o.id + ' / Client ' + o.customer.id + ' / Building ' + o.address.buildingId + '\n' + o.customer.notes + '\n\n';
+      }
 
       if (o.valid) {
         orders.push({
@@ -69,13 +70,13 @@ export class OrderProvider {
         });
       }
     });
-    console.log("report :");
+    console.log('report :');
     console.log(report);
-    console.log("orders ", orders);
+    console.log('orders ', orders);
 
     return new Promise((resolve, reject) => {
       this.http
-        .post<any>(this.apiUrl + "/employee/deliveryreport", {
+        .post<any>(this.apiUrl + '/employee/deliveryreport', {
           session_key: this.sessionKey,
           orders: orders,
           report: report
@@ -83,8 +84,7 @@ export class OrderProvider {
         .subscribe(
         res => {
           console.log(res);
-          if (res.result == "success") resolve();
-          else reject(res.error);
+          if (res.result === 'success') { resolve(); } else { reject(res.error); }
         },
         err => reject(err)
         );
@@ -92,22 +92,22 @@ export class OrderProvider {
   }
 
   presentToastSuccess(msg?: string) {
-    let toast = this.toastCtrl.create({
-      message: msg || "Ok",
-      position: "top",
-      cssClass: "toast valid",
+    const toast = this.toastCtrl.create({
+      message: msg || 'Ok',
+      position: 'top',
+      cssClass: 'toast valid',
       duration: 2000
     });
     toast.present();
   }
 
   presentToastError(error?: string) {
-    let toast = this.toastCtrl.create({
-      message: error || "Ooops, une erreur est survenue.",
-      position: "top",
+    const toast = this.toastCtrl.create({
+      message: error || 'Ooops, une erreur est survenue.',
+      position: 'top',
       showCloseButton: true,
-      cssClass: "toast error",
-      closeButtonText: "Fermer"
+      cssClass: 'toast error',
+      closeButtonText: 'Fermer'
     });
     toast.present();
   }
@@ -118,7 +118,7 @@ export class OrderProvider {
 
   startLoading() {
     this.loading = this.loadingCtrl.create({
-      spinner: "dots",
+      spinner: 'dots',
       dismissOnPageChange: true
     });
     this.loading.present();
@@ -133,13 +133,13 @@ export class OrderProvider {
   async loadSession() {
     await this.platform.ready();
 
-    return this.storage.get("sessionKey_delivery").then(res => {
+    return this.storage.get('sessionKey_delivery').then(res => {
       this.sessionKey = res;
-      this.storage.get("loggedInfo").then((loggedInfo: LoggedInfo) => {
+      this.storage.get('loggedInfo').then((loggedInfo: LoggedInfo) => {
         this.loggedInfo = loggedInfo;
       });
       // this.sessionInitialized$.next(true);
-      console.log("session loaded : ", res);
+      console.log('session loaded : ', res);
       return Promise.resolve(res);
     });
   }
@@ -147,21 +147,21 @@ export class OrderProvider {
   setSession(sessionKey: string, loggedInfo: LoggedInfo) {
     this.sessionKey = sessionKey;
     this.loggedInfo = loggedInfo;
-    return this.storage.set("sessionKey_delivery", sessionKey).then(() => {
-      return this.storage.set("loggedInfo", loggedInfo);
+    return this.storage.set('sessionKey_delivery', sessionKey).then(() => {
+      return this.storage.set('loggedInfo', loggedInfo);
     });
   }
 
   login(email, password) {
     return new Promise((resolve, reject) => {
       this.http
-        .post<any>(this.apiUrl + "/employee/login", {
+        .post<any>(this.apiUrl + '/employee/login', {
           email: email,
           password: password
         })
         .subscribe(
         res => {
-          if (res.result == "success" && res.session_key) {
+          if (res.result === 'success' && res.session_key) {
             this.setSession(res.session_key, {
               email: res.email,
               mapboxApiKey: res.mapbox_api_key,
@@ -181,16 +181,16 @@ export class OrderProvider {
   }
 
   logOut() {
-    console.log("logout");
+    console.log('logout');
     this.sessionKey = null;
-    return this.storage.set("sessionKey_delivery", null);
+    return this.storage.set('sessionKey_delivery', null);
   }
 
   getZones() {
-    console.log("getZones");
+    console.log('getZones');
     return new Promise((resolve, reject) => {
       this.http
-        .post<any>(this.apiUrl + "/employee/listzones", {
+        .post<any>(this.apiUrl + '/employee/listzones', {
           session_key: this.sessionKey
         })
         .subscribe(res => {
@@ -237,7 +237,9 @@ export class OrderProvider {
           id: c.id_customer,
           isNew: c.is_new,
           name: c.name,
-          notes: ""
+          firstname: c.firstname,
+          lastname: c.lastname,
+          notes: ''
         };
         c.orders.forEach(o => {
           const productList = new Array<Product>();
@@ -247,7 +249,7 @@ export class OrderProvider {
               name: p.product_name,
               price: parseFloat(p.unit_price),
               quantity: p.quantity
-            })
+            });
           });
           returningOrders.push({
             id: o.id,
@@ -270,17 +272,17 @@ export class OrderProvider {
   getOrders() {
     return new Promise((resolve, reject) => {
       this.http
-        .post<any>(this.apiUrl + "/employee/listorders", {
+        .post<any>(this.apiUrl + '/employee/listorders', {
           session_key: this.sessionKey,
           zone: this.zoneId,
-          date: format(this.date, "YYYY-MM-DD")
+          date: format(this.date, 'YYYY-MM-DD')
         })
         .pipe(map(this.processData))
         .subscribe(
         res => {
           this.orders = res;
-          this.calculateTotal();
-          this.counter.total = this.generalInformations.totalCustomer;
+          /* this.calculateTotal();
+          this.counter.total = this.generalInformations.totalCustomer; */
           resolve();
         },
         err => {
@@ -308,10 +310,10 @@ export class OrderProvider {
     });
   } */
 
-  calculateTotal() {
-    let totalCustomer = 0;
+  /* calculateTotal() {
+    const totalCustomer = 0;
     let totalNewCustomers = 0;
-    let totalProducts: Array<Product> = [];
+    const totalProducts: Array<Product> = [];
     let totalPrice = 0;
 
     totalNewCustomers = this.orders.filter(o => o.customer.isNew).length;
@@ -320,9 +322,9 @@ export class OrderProvider {
       o.products.forEach(p => {
         totalPrice += p.price * p.quantity;
         const index = totalProducts.findIndex(_product => {
-          return _product.productId == p.productId;
+          return _product.productId === p.productId;
         });
-        if (index == -1) {
+        if (index === -1) {
           totalProducts.push(JSON.parse(JSON.stringify(p)));
         } else {
           totalProducts[index].quantity += p.quantity;
@@ -331,7 +333,7 @@ export class OrderProvider {
     });
 
     const totalAddresses = this.orders.filter((item, index, inputArray) => {
-      return inputArray.indexOf(item) == index;
+      return inputArray.indexOf(item) === index;
     }).length;
 
     this.generalInformations = {
@@ -341,7 +343,7 @@ export class OrderProvider {
       totalProducts: totalProducts,
       totalPrice: Math.round(totalPrice * 100) / 100
     };
-  }
+  } */
 
   calculateStatus(order: Order) {
     this.validateOrder(order);
@@ -352,8 +354,8 @@ export class OrderProvider {
   }
 
   validateOrder(order: Order) {
-    order.address.issue = order.customer.notes != null && order.customer.notes !== "";
-    order.valid = order.deliveredTime != null && order.deliveredTime.length > 0 && order.deliveredTime != "0000-00-00 00:00:00";
+    order.address.issue = order.customer.notes != null && order.customer.notes !== '';
+    order.valid = order.deliveredTime != null && order.deliveredTime.length > 0 && order.deliveredTime !== '0000-00-00 00:00:00';
 
   }
 }
@@ -383,7 +385,7 @@ export interface Address {
   hasElevator: boolean;
   hasBadge: boolean;
   duplibadgeID: string;
-  rebadgeID: string,
+  rebadgeID: string;
   hasKey: boolean;
   comment: string;
 }
@@ -404,6 +406,8 @@ export interface Product {
 export interface Customer {
   id: string;
   name: string;
+  firstname: string;
+  lastname: string;
   floor: string;
   flatNumber: string;
   doorInformation: string;
@@ -421,6 +425,8 @@ export interface ApiOrder {
       id_customer: string;
       id_address: string;
       name: string;
+      firstname: string;
+      lastname: string;
       floor: string;
       door_information: string;
       building: {
@@ -456,5 +462,5 @@ export interface ApiOrder {
         }
       ]
     }
-  ]
+  ];
 }

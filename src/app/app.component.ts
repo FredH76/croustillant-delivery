@@ -10,8 +10,6 @@ import { MapotempoProvider } from "../providers/mapotempo/mapotempo";
 })
 export class MyApp {
   rootPage: any;
-  // rootPage: any = "DeliveryZonesPage";
-  // rootPage: any = "AddressesListPage";
 
   constructor(
     platform: Platform,

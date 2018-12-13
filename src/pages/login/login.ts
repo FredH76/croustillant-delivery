@@ -24,8 +24,8 @@ export class LoginPage {
     public os: OrderProvider
   ) {
     this.form = this.formBuilder.group({
-      email: ["lemaildecyril@gmail.com", [Validators.required]],
-      password: ["prst@1234", [Validators.required]]
+      email: ["", [Validators.required]],
+      password: ["", [Validators.required]]
     });
   }
 

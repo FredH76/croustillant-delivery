@@ -23,22 +23,22 @@
       <ion-item-divider color="light">Informations générales</ion-item-divider>
       <ion-item>
         Nombre d’adresses à livrer
-        <span item-content>{{os.generalInformations.totalAddresses}}</span>
+        <span item-content>{{route.total.addresses}}</span>
       </ion-item>
       <ion-item>
         Nombre de clients
-        <span item-content>{{os.generalInformations.totalCustomer}}
-          <span>({{os.generalInformations.totalNewCustomers}} nouveaux)</span>
+        <span item-content>{{route.total.customers}}
+          <span>({{route.total.newCustomers}} nouveaux)</span>
         </span>
       </ion-item>
       <ion-item>
         CA TTC
-        <span item-content>{{os.generalInformations.totalPrice}} €</span>
+        <span item-content>{{route.total.amount}} €</span>
       </ion-item>
     </ion-item-group>
     <ion-item-group>
       <ion-item-divider color="light">Commandes</ion-item-divider>
-      <ion-item *ngFor="let product of os.generalInformations.totalProducts">
+      <ion-item *ngFor="let product of route.total.products">
         {{product.name}}
         <span item-content>{{product.quantity}}</span>
       </ion-item>

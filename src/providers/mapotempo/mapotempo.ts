@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { OrderProvider, Order } from '../order/order';
+import { OrderProvider, Order, Product, Address, Customer } from '../order/order';
 
 @Injectable()
 export class MapotempoProvider {
@@ -12,8 +12,8 @@ export class MapotempoProvider {
   lastExport: any;
 
   constructor(public http: HttpClient, private os: OrderProvider) {
-    this.mapotempoApiUrl = "https://app.mapotempo.com/api/0.1";
-    this.mapotempoPlanExportApiUrl = "https://croustillant-delivery.herokuapp.com";
+    this.mapotempoApiUrl = 'https://app.mapotempo.com/api/0.1';
+    this.mapotempoPlanExportApiUrl = 'https://croustillant-delivery.herokuapp.com';
   }
 
   init() {
@@ -23,10 +23,10 @@ export class MapotempoProvider {
   getDestinations() {
     return new Promise((resolve, reject) => {
       if (!this.os.loggedInfo || !this.os.loggedInfo.mapotempoApiKey) {
-        return reject('No Mapotempo api key provided.')
+        return reject('No Mapotempo api key provided.');
       }
       this.http
-        .get<any>(this.mapotempoApiUrl + "/destinations?api_key=" + this.os.loggedInfo.mapotempoApiKey)
+        .get<any>(this.mapotempoApiUrl + '/destinations?api_key=' + this.os.loggedInfo.mapotempoApiKey)
         .subscribe(res => {
           if (res.error) {
             reject(res.error);
@@ -41,13 +41,13 @@ export class MapotempoProvider {
   getPlannings() {
     return new Promise((resolve, reject) => {
       if (!this.os.loggedInfo || !this.os.loggedInfo.mapotempoApiKey) {
-        return reject('No Mapotempo api key provided.')
+        return reject('No Mapotempo api key provided.');
       }
       this.http
-        .get<any>(this.mapotempoApiUrl + "/plannings", {
+        .get<any>(this.mapotempoApiUrl + '/plannings', {
           params: {
             api_key: this.os.loggedInfo.mapotempoApiKey,
-            active: "true"
+            active: 'true'
           }
         })
         .subscribe(res => {
@@ -64,15 +64,15 @@ export class MapotempoProvider {
   exportPlanningsToMapotempo() {
     return new Promise((resolve, reject) => {
       if (!this.os.loggedInfo || !this.os.loggedInfo.mapotempoApiKey) {
-        return reject('No Mapotempo api key provided.')
+        return reject('No Mapotempo api key provided.');
       }
       this.http
-        .post<any>(this.mapotempoPlanExportApiUrl + "/plannings", {
+        .post<any>(this.mapotempoPlanExportApiUrl + '/plannings', {
           sessionKey: this.os.sessionKey
         })
         .subscribe(
         res => {
-          if (res.success == true) {
+          if (res.success === true) {
             resolve();
           } else {
             reject({
@@ -89,7 +89,7 @@ export class MapotempoProvider {
   getLastExport() {
     return new Promise((resolve, reject) => {
       this.http
-        .get<any>(this.mapotempoPlanExportApiUrl + "/plannings/status")
+        .get<any>(this.mapotempoPlanExportApiUrl + '/plannings/status')
         .subscribe(res => {
           if (res.error) {
             reject(res.error);
@@ -112,7 +112,7 @@ export class MapotempoProvider {
     }
     return new Promise((resolve, reject) => {
       if (!this.os.loggedInfo || !this.os.loggedInfo.mapotempoApiKey) {
-        return reject('No Mapotempo api key provided.')
+        return reject('No Mapotempo api key provided.');
       }
       this.http
         .get<Array<MapotempoRoute>>(this.mapotempoApiUrl + `/plannings/${planningId}/routes`, {
@@ -135,8 +135,9 @@ export class MapotempoProvider {
                   } else {
                     stop.foundOrder = false;
                   }
-                  stop.destination = this.destinations.find(d => d.id == stop.destination_id);
+                  stop.destination = this.destinations.find(d => d.id === stop.destination_id);
                 });
+                route.total = this.getTotal(route);
               });
             }
             resolve(res);
@@ -145,13 +146,70 @@ export class MapotempoProvider {
     });
   }
 
+  private getTotal(route: MapotempoRoute) {
+    const addresses = new Array<Address>();
+    const customers = new Array<Customer>();
+    const products = new Array<Product>();
+    let customersCount = 0;
+    let totalAmount = 0;
+    route.stops.forEach(stop => {
+      if (stop.order) {
+        if (stop.order.address) {
+          const address = stop.order.address;
+          const foundIndex = addresses.findIndex(a => a.label === address.label);
+          if (foundIndex < 0) {
+            addresses.push(address);
+          }
+        }
+        if (stop.order.customer) {
+          const customer = stop.order.customer;
+          if (!customers[customer.id]) {
+            customersCount = customersCount + 1;
+            customers[customer.id] = customer;
+          }
+        }
+        if (stop.order.products) {
+          stop.order.products.forEach(product => {
+            totalAmount += product.price * product.quantity;
+            const foundIndex = products.findIndex(sp => sp.productId === product.productId);
+            if (foundIndex < 0) {
+              products.push({
+                name: product.name,
+                price: product.price,
+                productId: product.productId,
+                quantity: product.quantity
+              });
+            } else {
+              products[foundIndex].quantity += product.quantity;
+            }
+          });
+        }
+      }
+    });
+    const newCustomers = customers.filter(c => c.isNew === true).length;
+
+    return {
+      addresses: addresses.length ,
+      customers: customersCount,
+      newCustomers,
+      amount: Math.round(totalAmount * 100) / 100,
+      products
+    };
+  }
+
+  private countDistinct(array: Array<any>) {
+    const counts = Object.create(null);
+    array.forEach(val => {
+      counts[val] = counts[val] ? counts[val] + 1 : 1;
+    });
+    return counts;
+  }
+
   private getOrder(visitId: string) {
-    let cIndex;
     if (!this.os.orders) {
       return;
     }
-    // TODO: change id
-    return this.os.orders.find(o => o.id.toString() == visitId);
+    return this.os.orders.find(o => o.id.toString() === visitId);
   }
 
   getGeocodedAddress(id: number) {
@@ -202,8 +260,15 @@ export interface MapotempoRoute {
       operation: any
     }
   ];
-  geojson: any,
-  stops: Array<MapotempoStop>
+  geojson: any;
+  stops: Array<MapotempoStop>;
+  total: {
+    addresses: number,
+    customers: number,
+    newCustomers: number,
+    amount: number,
+    products: Array<Product>
+  };
 }
 
 export interface MapotempoStop {
@@ -224,8 +289,8 @@ export interface MapotempoStop {
   out_of_work_time: boolean;
   out_of_max_distance: boolean;
   status: string;
-  eta: string,
-  order: Order,
-  foundOrder: boolean,
-  destination: GeocodedAddress
+  eta: string;
+  order: Order;
+  foundOrder: boolean;
+  destination: GeocodedAddress;
 }

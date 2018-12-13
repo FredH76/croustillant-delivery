@@ -17,8 +17,7 @@
       <p>{{ planning.date | date:'dd/MM/yyyy' }}</p>
     </button>
   </ion-list>
-  <!-- TODO: faire une fonction de vérif -->
-  <ion-list *ngIf="os.loggedInfo && (os.loggedInfo.email === 'lemaildecyril@gmail.com' || os.loggedInfo.email === 'tanguy@croustillant.com')">
+  <ion-list *ngIf="isAdmin">
     <ion-list-header>Administration Mapotempo
     </ion-list-header>
     <ion-item *ngIf="isLastExportLoading === true" text-wrap>

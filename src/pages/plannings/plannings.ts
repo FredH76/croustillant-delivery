@@ -16,6 +16,7 @@ export class PlanningsPage {
   plannings: any;
   lastExport: any;
   isLastExportLoading: boolean;
+  isAdmin: boolean;
 
   constructor(
     public navCtrl: NavController,
@@ -27,6 +28,7 @@ export class PlanningsPage {
     private alertCtrl: AlertController
   ) {
     this.isLastExportLoading = false;
+    this.isAdmin = this.os.loggedInfo && (this.os.loggedInfo.email === 'lemaildecyril@gmail.com' || this.os.loggedInfo.email === 'tanguy@croustillant.com');
   }
 
   ionViewDidLoad() {
